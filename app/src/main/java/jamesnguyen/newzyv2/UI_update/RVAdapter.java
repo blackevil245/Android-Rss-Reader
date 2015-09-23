@@ -1,5 +1,6 @@
-package jamesnguyen.newzyv2;
+package jamesnguyen.newzyv2.UI_update;
 
+import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,19 +10,23 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import jamesnguyen.newzyv2.R;
+import jamesnguyen.newzyv2.RSS_Processcors.RssItem;
+
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
 
     private final List<RssItem> items;
+    private final Context context;
 
-    RVAdapter(List<RssItem> items) {
+    public RVAdapter(Context context, List<RssItem> items) {
         this.items = items;
+        this.context = context;
     }
 
     @Override
     public RVAdapter.FeedViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item, viewGroup, false);
-        FeedViewHolder fvh = new FeedViewHolder(v);
-        return fvh;
+        return new FeedViewHolder(v);
     }
 
     @Override
@@ -39,6 +44,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
     }
 
     public static class FeedViewHolder extends RecyclerView.ViewHolder {

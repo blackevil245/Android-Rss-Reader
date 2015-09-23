@@ -1,4 +1,4 @@
-package jamesnguyen.newzyv2;
+package jamesnguyen.newzyv2.RSS_Processcors;
 
 import android.app.IntentService;
 import android.content.Intent;
