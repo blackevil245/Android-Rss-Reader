@@ -26,27 +26,36 @@ public class RssParser {
     }
 
     public List<RssItem> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, null, "rss");
+//        parser.require(XmlPullParser.START_TAG, null, "rss");
         String title = null;
         String link = null;
         String pubDate = null;
         String description = null;
         Boolean insideItem = false;
-        List<RssItem> items = new ArrayList<RssItem>();
-        while (parser.next() != XmlPullParser.END_DOCUMENT) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
+        int eventType = parser.getEventType();
+        List<RssItem> items = new ArrayList<>();
+
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+            if (eventType == XmlPullParser.START_TAG) {
+                if (parser.getName().equalsIgnoreCase("item")) {
+                    insideItem = true;
+                } else if (parser.getName().equalsIgnoreCase("title")) {
+                    if (insideItem)
+                        title = readTitle(parser); //extract the title of article
+                } else if (parser.getName().equalsIgnoreCase("link")) {
+                    if (insideItem)
+                        link = readLink(parser); //extract the link of article
+                } else if (parser.getName().equalsIgnoreCase("pubDate")) {
+                    if (insideItem)
+                        pubDate = readPubDate(parser); //extract the link of article
+                } else if (parser.getName().equalsIgnoreCase("description")) {
+                    if (insideItem)
+                        description = readDescription(parser); //extract the link of article
+                }
+            } else if (eventType == XmlPullParser.END_TAG && parser.getName().equalsIgnoreCase("item")) {
+                insideItem = false;
             }
-            String name = parser.getName();
-            if (name.equalsIgnoreCase("title")) {
-                title = readTitle(parser);
-            } else if (name.equalsIgnoreCase("link")) {
-                link = readLink(parser);
-            } else if (name.equalsIgnoreCase("pubDate")) {
-                pubDate = readPubDate(parser);
-            } else if (name.equalsIgnoreCase("description")) {
-                description = readDescription(parser);
-            }
+            eventType = parser.next();
 
             if (title != null && link != null && pubDate != null && description != null) {
                 RssItem item = new RssItem(title, link, pubDate, description);

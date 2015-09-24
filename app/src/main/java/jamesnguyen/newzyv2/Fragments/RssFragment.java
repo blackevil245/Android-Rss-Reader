@@ -10,8 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -20,7 +18,7 @@ import jamesnguyen.newzyv2.RSS_Processcors.RssItem;
 import jamesnguyen.newzyv2.RSS_Processcors.RssService;
 import jamesnguyen.newzyv2.UI_update.RVAdapter;
 
-public class RssFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class RssFragment extends Fragment {
 
     protected View mView;
     private RecyclerView rv;
@@ -29,13 +27,8 @@ public class RssFragment extends Fragment implements AdapterView.OnItemClickList
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             List<RssItem> items = (List<RssItem>) resultData.getSerializable(RssService.ITEMS);
-            if (items != null) {
-                RVAdapter adapter = new RVAdapter(getActivity(), items);
-                rv.setAdapter(adapter);
-            } else {
-                Toast.makeText(getActivity(), "An error occured while downloading the rss feed.",
-                        Toast.LENGTH_LONG).show();
-            }
+            RVAdapter adapter = new RVAdapter(getActivity(), items);
+            rv.setAdapter(adapter);
         }
     };
 
@@ -57,7 +50,7 @@ public class RssFragment extends Fragment implements AdapterView.OnItemClickList
         LinearLayoutManager rvManager = new LinearLayoutManager(getActivity());
 
         rv.setLayoutManager(rvManager);
-        rv.setHasFixedSize(true);
+        rv.setHasFixedSize(false);
         rvManager.canScrollVertically();
 
         return mView;
@@ -67,10 +60,5 @@ public class RssFragment extends Fragment implements AdapterView.OnItemClickList
         Intent intent = new Intent(getActivity(), RssService.class);
         intent.putExtra(RssService.RECEIVER, resultReceiver);
         getActivity().startService(intent);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
     }
 }

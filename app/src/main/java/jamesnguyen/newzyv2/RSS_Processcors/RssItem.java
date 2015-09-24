@@ -11,6 +11,9 @@ public class RssItem {
         this.description = description;
     }
 
+    public RssItem() {
+    }
+
     public String getTitle() {
         return title;
     }

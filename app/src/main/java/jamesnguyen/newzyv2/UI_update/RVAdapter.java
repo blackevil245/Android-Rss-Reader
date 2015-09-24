@@ -15,12 +15,16 @@ import jamesnguyen.newzyv2.RSS_Processcors.RssItem;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
 
-    private final List<RssItem> items;
-    private final Context context;
+    private static List<RssItem> items = null;
+    private static Context context;
 
     public RVAdapter(Context context, List<RssItem> items) {
         this.items = items;
         this.context = context;
+    }
+
+    public static List<RssItem> getItems() {
+        return items;
     }
 
     @Override
@@ -33,7 +37,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
     public void onBindViewHolder(RVAdapter.FeedViewHolder holder, int position) {
         FeedViewHolder.getTitle().setText(items.get(position).getTitle());
         FeedViewHolder.getPubDate().setText(items.get(position).getPubDate());
-        FeedViewHolder.getDescription().setText(items.get(position).getDescription());
+        //FeedViewHolder.getDescription().setText(items.get(position).getDescription());
     }
 
     @Override
@@ -62,7 +66,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
             cv = (CardView) itemView.findViewById(R.id.cv);
             title = (TextView) itemView.findViewById(R.id.title);
             pubDate = (TextView) itemView.findViewById(R.id.pubDate);
-            description = (TextView) itemView.findViewById(R.id.description);
+            //description = (TextView) itemView.findViewById(R.id.description);
         }
 
         public static TextView getTitle() {
