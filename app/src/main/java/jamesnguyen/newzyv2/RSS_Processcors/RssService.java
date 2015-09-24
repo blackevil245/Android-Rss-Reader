@@ -18,7 +18,7 @@ public class RssService extends IntentService {
 
     public static final String ITEMS = "items";
     public static final String RECEIVER = "receiver";
-    private static final String RSS_LINK = "http://www.pcworld.com/index.rss";
+    private static final String RSS_LINK = "http://www.wired.com/category/gear/feed/";
 
     public RssService() {
         super("RssService");

@@ -7,34 +7,56 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/cv"
+        elevation="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:clickable="false"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:longClickable="true"
         android:padding="10dp"
         card_view:elevation="5dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusableInTouchMode="false"
             android:orientation="vertical"
             android:padding="16dp">
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:text="Title"
+                android:textColor="@color/primary_text"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title"
+                android:layout_margin="5dp"
+                android:text="Description Description Description Description Description Description Description Description"
+                android:textColor="@color/primary_text"/>
 
             <TextView
                 android:id="@+id/pubDate"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/description"
+                android:layout_margin="5dp"
+                android:clickable="true"
+                android:text="Wed, Sep 23rd 2015 15:15:36 - 0700"
+                android:textColor="@color/primary_text"/>
 
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-        </LinearLayout>
+        </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 </LinearLayout>

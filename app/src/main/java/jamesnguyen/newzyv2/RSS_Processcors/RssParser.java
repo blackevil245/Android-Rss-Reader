@@ -31,19 +31,20 @@ public class RssParser {
         String link = null;
         String pubDate = null;
         String description = null;
+        Boolean insideItem = false;
         List<RssItem> items = new ArrayList<RssItem>();
         while (parser.next() != XmlPullParser.END_DOCUMENT) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("title")) {
+            if (name.equalsIgnoreCase("title")) {
                 title = readTitle(parser);
-            } else if (name.equals("link")) {
+            } else if (name.equalsIgnoreCase("link")) {
                 link = readLink(parser);
-            } else if (name.equals("pubDate")) {
+            } else if (name.equalsIgnoreCase("pubDate")) {
                 pubDate = readPubDate(parser);
-            } else if (name.equals("description")) {
+            } else if (name.equalsIgnoreCase("description")) {
                 description = readDescription(parser);
             }
 
