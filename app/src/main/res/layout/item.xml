@@ -10,7 +10,6 @@
         elevation="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:clickable="false"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
@@ -46,6 +45,11 @@
                 android:clickable="true"
                 android:text="Wed, Sep 23rd 2015 15:15:36 - 0700"
                 android:textColor="@color/primary_text"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background_color="@color/divider"/>
 
         </RelativeLayout>
 
