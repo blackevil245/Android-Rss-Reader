@@ -50,7 +50,6 @@ public class RssFragment extends Fragment {
         LinearLayoutManager rvManager = new LinearLayoutManager(getActivity());
 
         rv.setLayoutManager(rvManager);
-        //rvManager.canScrollVertically();
 
         return mView;
     }

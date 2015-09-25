@@ -1,16 +1,23 @@
 package jamesnguyen.newzyv2.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
+import jamesnguyen.newzyv2.ASyncTaskService.ImageLoadTask;
 import jamesnguyen.newzyv2.Model.RssItem;
 import jamesnguyen.newzyv2.R;
+
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
 
@@ -26,18 +33,30 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
         return items;
     }
 
+    // CREATE NEW CARDVIEW
     @Override
     public RVAdapter.FeedViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item, viewGroup, false);
         return new FeedViewHolder(v);
     }
 
+    // REPLACE DATA ON NEW CARDVIEW
     @Override
-    public void onBindViewHolder(RVAdapter.FeedViewHolder holder, int position) {
+    public void onBindViewHolder(RVAdapter.FeedViewHolder holder, final int position) {
         holder.getTitle().setText(items.get(position).getTitle());
         holder.getPubDate().setText(items.get(position).getPubDate());
-
-        //FeedViewHolder.getDescription().setText(items.get(position).getDescription());
+        holder.getReadButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(items.get(position).getLink()));
+                context.startActivity(browserIntent);
+            }
+        });
+        try {
+            new ImageLoadTask(items.get(position).getImageURL(), holder.getImageHolder()).execute();
+        } catch (Exception e) {
+            Log.w(e.toString(), "Cant get to image URL");
+        }
     }
 
     @Override
@@ -58,13 +77,15 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
     public static class FeedViewHolder extends RecyclerView.ViewHolder {
         private TextView title;
         private TextView pubDate;
-//        public static TextView description;
+        private Button readButton;
+        private ImageView imageHolder;
 
         FeedViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.item_title);
             pubDate = (TextView) itemView.findViewById(R.id.item_pubDate);
-//            description = (TextView) itemView.findViewById(R.id.description);
+            readButton = (Button) itemView.findViewById(R.id.read_button);
+            imageHolder = (ImageView) itemView.findViewById(R.id.img_thumbnail);
         }
 
         public TextView getTitle() {
@@ -75,8 +96,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
             return pubDate;
         }
 
-//        public static TextView getDescription() {
-//            return description;
-//        }
+        public Button getReadButton() {
+            return readButton;
+        }
+
+        public ImageView getImageHolder() {
+            return imageHolder;
+        }
     }
 }

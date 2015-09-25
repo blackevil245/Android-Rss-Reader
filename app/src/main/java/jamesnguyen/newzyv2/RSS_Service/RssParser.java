@@ -2,6 +2,8 @@ package jamesnguyen.newzyv2.RSS_Service;
 
 import android.util.Xml;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -31,7 +33,7 @@ public class RssParser {
         String title = null;
         String link = null;
         String pubDate = null;
-        String description = null;
+        Document description = null;
         Boolean insideItem = false;
         int eventType = parser.getEventType();
         List<RssItem> items = new ArrayList<>();
@@ -89,13 +91,15 @@ public class RssParser {
         String pubDate = readText(parser).substring(0, 25);
         parser.require(XmlPullParser.END_TAG, nameSpace, "pubDate");
         return pubDate;
+
     }
 
-    private String readDescription(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private Document readDescription(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, nameSpace, "description");
         String description = readText(parser);
         parser.require(XmlPullParser.END_TAG, nameSpace, "description");
-        return description;
+        Document doc = Jsoup.parseBodyFragment(description);
+        return doc;
     }
 
     private String readText(XmlPullParser parser) throws XmlPullParserException, IOException {

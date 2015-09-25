@@ -7,6 +7,8 @@
     <string name="drawer_open">Drawer Opened</string>
     <string name="drawer_close">Drawer Closed</string>
 
+    <string name="read_button">Read</string>
+
     <string-array name="drawer_list">
         <item>Item 1</item>
         <item>Item 2</item>
