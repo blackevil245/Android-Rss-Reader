@@ -26,7 +26,6 @@ public class RssParser {
     }
 
     public List<RssItem> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
-//        parser.require(XmlPullParser.START_TAG, null, "rss");
         String title = null;
         String link = null;
         String pubDate = null;

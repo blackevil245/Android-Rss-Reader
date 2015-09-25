@@ -1,7 +1,6 @@
 package jamesnguyen.newzyv2.UI_update;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +34,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
 
     @Override
     public void onBindViewHolder(RVAdapter.FeedViewHolder holder, int position) {
-        FeedViewHolder.getTitle().setText(items.get(position).getTitle());
-        FeedViewHolder.getPubDate().setText(items.get(position).getPubDate());
+        holder.getTitle().setText(items.get(position).getTitle());
+        holder.getPubDate().setText(items.get(position).getPubDate());
+
         //FeedViewHolder.getDescription().setText(items.get(position).getDescription());
     }
 
@@ -56,29 +56,27 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
     }
 
     public static class FeedViewHolder extends RecyclerView.ViewHolder {
-        private static CardView cv;
-        private static TextView title;
-        private static TextView pubDate;
-        private static TextView description;
+        private TextView title;
+        private TextView pubDate;
+//        public static TextView description;
 
         FeedViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView) itemView.findViewById(R.id.cv);
             title = (TextView) itemView.findViewById(R.id.title);
             pubDate = (TextView) itemView.findViewById(R.id.pubDate);
-            //description = (TextView) itemView.findViewById(R.id.description);
+//            description = (TextView) itemView.findViewById(R.id.description);
         }
 
-        public static TextView getTitle() {
+        public TextView getTitle() {
             return title;
         }
 
-        public static TextView getPubDate() {
+        public TextView getPubDate() {
             return pubDate;
         }
 
-        public static TextView getDescription() {
-            return description;
-        }
+//        public static TextView getDescription() {
+//            return description;
+//        }
     }
 }
