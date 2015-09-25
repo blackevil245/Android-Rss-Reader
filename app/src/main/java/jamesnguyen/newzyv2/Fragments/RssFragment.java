@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import jamesnguyen.newzyv2.Adapter.RVAdapter;
+import jamesnguyen.newzyv2.Model.RssItem;
 import jamesnguyen.newzyv2.R;
-import jamesnguyen.newzyv2.RSS_Processcors.RssItem;
-import jamesnguyen.newzyv2.RSS_Processcors.RssService;
-import jamesnguyen.newzyv2.UI_update.RVAdapter;
+import jamesnguyen.newzyv2.RSS_Service.RssService;
 
 public class RssFragment extends Fragment {
 

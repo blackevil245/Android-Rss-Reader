@@ -1,4 +1,4 @@
-package jamesnguyen.newzyv2.UI_update;
+package jamesnguyen.newzyv2.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import jamesnguyen.newzyv2.Model.RssItem;
 import jamesnguyen.newzyv2.R;
-import jamesnguyen.newzyv2.RSS_Processcors.RssItem;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
 
@@ -62,8 +62,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
 
         FeedViewHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.title);
-            pubDate = (TextView) itemView.findViewById(R.id.pubDate);
+            title = (TextView) itemView.findViewById(R.id.item_title);
+            pubDate = (TextView) itemView.findViewById(R.id.item_pubDate);
 //            description = (TextView) itemView.findViewById(R.id.description);
         }
 

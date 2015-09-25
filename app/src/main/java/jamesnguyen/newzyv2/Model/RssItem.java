@@ -1,4 +1,4 @@
-package jamesnguyen.newzyv2.RSS_Processcors;
+package jamesnguyen.newzyv2.Model;
 
 public class RssItem {
 

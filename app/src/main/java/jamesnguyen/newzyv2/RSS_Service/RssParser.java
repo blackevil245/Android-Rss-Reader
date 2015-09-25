@@ -1,4 +1,4 @@
-package jamesnguyen.newzyv2.RSS_Processcors;
+package jamesnguyen.newzyv2.RSS_Service;
 
 import android.util.Xml;
 
@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import jamesnguyen.newzyv2.Model.RssItem;
 
 public class RssParser {
     private final String nameSpace = null; //No name space
@@ -84,7 +86,7 @@ public class RssParser {
 
     private String readPubDate(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, nameSpace, "pubDate");
-        String pubDate = readText(parser);
+        String pubDate = readText(parser).substring(0, 25);
         parser.require(XmlPullParser.END_TAG, nameSpace, "pubDate");
         return pubDate;
     }

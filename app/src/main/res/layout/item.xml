@@ -10,14 +10,11 @@
         elevation="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="false"
         android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:longClickable="true"
         android:padding="10dp"
         card_view:elevation="5dp">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="false"
@@ -25,7 +22,7 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/item_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -36,22 +33,21 @@
                 android:textSize="20sp"/>
 
             <TextView
-                android:id="@+id/pubDate"
+                android:id="@+id/item_pubDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/title"
+                android:layout_below="@+id/item_title"
                 android:layout_margin="5dp"
                 android:clickable="true"
                 android:text="Wed, Sep 23rd 2015 15:15:36 - 0700"
                 android:textColor="@color/primary_text"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background_color="@color/divider"/>
+        </LinearLayout>
 
-        </RelativeLayout>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"/>
     </android.support.v7.widget.CardView>
 </LinearLayout>

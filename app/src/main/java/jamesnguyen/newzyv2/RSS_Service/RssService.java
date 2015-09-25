@@ -1,4 +1,4 @@
-package jamesnguyen.newzyv2.RSS_Processcors;
+package jamesnguyen.newzyv2.RSS_Service;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
+
+import jamesnguyen.newzyv2.Model.RssItem;
 
 public class RssService extends IntentService {
 
