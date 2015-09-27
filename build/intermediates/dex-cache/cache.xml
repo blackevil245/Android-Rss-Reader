@@ -2,36 +2,12 @@
 <items version="2">
 
     <item
-        jar="J:\Android_Project\Newzyv2\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="f8efd0096475e0daf054267b61544e10dc776503">
-        <dex
-            dex="J:\Android_Project\Newzyv2\app\build\intermediates\pre-dexed\release\classes-d26b1020af9ced5ba0ca5345adc29eaef7f2dfee.jar"/>
-    </item>
-    <item
         jar="J:\Android_Project\Newzyv2\app\build\intermediates\exploded-aar\com.android.support\palette-v7\22.2.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="d3aba1c188fea5ee83ebbcb458be29d1cc0ef483">
         <dex
             dex="J:\Android_Project\Newzyv2\app\build\intermediates\pre-dexed\release\classes-ce82f5c9a90cbcb25ec327ef08603f74c1451958.jar"/>
-    </item>
-    <item
-        jar="J:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.1\support-annotations-22.2.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
-        <dex
-            dex="J:\Android_Project\Newzyv2\app\build\intermediates\pre-dexed\release\support-annotations-22.2.1-92f92bb78dda4916509bb791fff703d4e49dbcda.jar"/>
-    </item>
-    <item
-        jar="J:\Android_Project\Newzyv2\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
-        <dex
-            dex="J:\Android_Project\Newzyv2\app\build\intermediates\pre-dexed\release\classes-d56b055517d59b4e7e36565b588df5cca9918d49.jar"/>
     </item>
     <item
         jar="J:\Android_Project\Newzyv2\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\22.2.1\jars\classes.jar"
@@ -56,6 +32,46 @@
         sha1="3abb4b88f5a8a0584a9b01d3170d7165f12f8588">
         <dex
             dex="J:\Android_Project\Newzyv2\app\build\intermediates\pre-dexed\release\classes-44d24c0c41b4adfaa2cf2596673354a2fc1b3b8b.jar"/>
+    </item>
+    <item
+        jar="J:\Android_Project\Newzyv2\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
+        <dex
+            dex="J:\Android_Project\Newzyv2\app\build\intermediates\pre-dexed\release\classes-d56b055517d59b4e7e36565b588df5cca9918d49.jar"/>
+    </item>
+    <item
+        jar="J:\Android_Project\Newzyv2\app\libs\jsoup-1.8.3.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="3a86e137575e4a45f5a9eec407f8135512e823a2">
+        <dex
+            dex="J:\Android_Project\Newzyv2\app\build\intermediates\pre-dexed\debug\jsoup-1.8.3-06d3f75f1183b2e4239f1e48a385dad82ad7b842.jar"/>
+    </item>
+    <item
+        jar="J:\Android_Project\Newzyv2\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="f8efd0096475e0daf054267b61544e10dc776503">
+        <dex
+            dex="J:\Android_Project\Newzyv2\app\build\intermediates\pre-dexed\release\classes-d26b1020af9ced5ba0ca5345adc29eaef7f2dfee.jar"/>
+    </item>
+    <item
+        jar="J:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.1\support-annotations-22.2.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
+        <dex
+            dex="J:\Android_Project\Newzyv2\app\build\intermediates\pre-dexed\release\support-annotations-22.2.1-92f92bb78dda4916509bb791fff703d4e49dbcda.jar"/>
+    </item>
+    <item
+        jar="J:\Android_Project\Newzyv2\app\libs\picasso-2.5.2.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex
+            dex="J:\Android_Project\Newzyv2\app\build\intermediates\pre-dexed\debug\picasso-2.5.2-6e18aa06d101b2821535c4002b5bb70e17347406.jar"/>
     </item>
     <item
         jar="J:\Android_Project\Newzyv2\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\libs\internal_impl-22.2.1.jar"

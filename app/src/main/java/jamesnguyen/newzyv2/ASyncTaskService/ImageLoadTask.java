@@ -11,6 +11,8 @@ import java.net.URL;
 
 public class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
 
+    // REPLACED WITH PICASSO LIB
+
     private String url;
     private ImageView imageView;
 
