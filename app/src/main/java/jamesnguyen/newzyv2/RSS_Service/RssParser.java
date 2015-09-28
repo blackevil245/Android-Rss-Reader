@@ -88,7 +88,7 @@ public class RssParser {
 
     private String readPubDate(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, nameSpace, "pubDate");
-        String pubDate = readText(parser).substring(0, 25);
+        String pubDate = readText(parser).substring(0, 22);
         parser.require(XmlPullParser.END_TAG, nameSpace, "pubDate");
         return pubDate;
 
