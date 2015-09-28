@@ -26,7 +26,6 @@ public class Main extends AppCompatActivity {
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private String[] mDrawerListItems;
-    private RssFragment currentRssFragment;
     private boolean backPressedOnce = false;
 
     @Override
@@ -47,7 +46,7 @@ public class Main extends AppCompatActivity {
 
         /////// SETUP DRAWER ////////
         mDrawerListItems = getResources().getStringArray(R.array.drawer_list);
-        mDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mDrawerListItems));
+        mDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_item, R.id.menu_item_title, mDrawerListItems));
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -93,24 +92,32 @@ public class Main extends AppCompatActivity {
 
         /////// START RSS FRAGMENTS //////
         if (savedInstanceState == null) {
-            addWelcomeFragment();
+            addWelcomeFragment("http://www.wired.com/category/photo/feed/");
         }
     }
 
     private void replaceFragment(String link) {
+        Bundle bundle = new Bundle();
+        bundle.putString(RssFragment.LINK, link);
+        RssFragment newFragment = new RssFragment();
+        newFragment.setArguments(bundle);
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        RssFragment newFragment = new RssFragment(link);
-        transaction.remove(currentRssFragment);
-        transaction.add(R.id.fragment_container, newFragment);
-        currentRssFragment = newFragment;
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+//        currentRssFragment = newFragment;
         transaction.commit();
     }
 
-    private void addWelcomeFragment() {
+    private void addWelcomeFragment(String link) {
+        Bundle bundle = new Bundle();
+        bundle.putString(RssFragment.LINK, link);
+        RssFragment fragmentWelcome = new RssFragment();
+        fragmentWelcome.setArguments(bundle);
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        RssFragment fragmentWelcome = new RssFragment("http://www.wired.com/category/photo/feed/");
         transaction.add(R.id.fragment_container, fragmentWelcome);
-        currentRssFragment = fragmentWelcome;
+//        currentRssFragment = fragmentWelcome;
         transaction.commit();
     }
 

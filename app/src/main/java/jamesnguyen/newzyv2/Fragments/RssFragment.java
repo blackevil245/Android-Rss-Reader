@@ -19,6 +19,7 @@ import jamesnguyen.newzyv2.R;
 import jamesnguyen.newzyv2.RSS_Service.RssService;
 
 public class RssFragment extends Fragment {
+    public final static String LINK = "link";
 
     protected View mView;
     private RecyclerView rv;
@@ -31,22 +32,20 @@ public class RssFragment extends Fragment {
             rv.setAdapter(adapter);
         }
     };
-    private String fragment_link;
 
-    public RssFragment(String link) {
-        this.fragment_link = link;
-    }
+    private String fragment_link;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        fragment_link = this.getArguments().getString(LINK);
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         ////// START RSS SERVICE ////////
         startService();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         this.mView = inflater.inflate(R.layout.rss_fragment, container, false);
 
         /////// SETUP RECYCLER VIEW /////

@@ -3,13 +3,13 @@
       xmlns:myapp="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_black_24dp"
+        android:icon="@drawable/ic_search_white_24dp"
         android:title="@string/search"
         myapp:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings_black_24dp"
+        android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/setting"
         myapp:showAsAction="ifRoom"/>
 
