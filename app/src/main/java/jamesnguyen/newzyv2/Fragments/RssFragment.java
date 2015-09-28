@@ -31,6 +31,11 @@ public class RssFragment extends Fragment {
             rv.setAdapter(adapter);
         }
     };
+    private String fragment_link;
+
+    public RssFragment(String link) {
+        this.fragment_link = link;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,17 +51,15 @@ public class RssFragment extends Fragment {
 
         /////// SETUP RECYCLER VIEW /////
         rv = (RecyclerView) mView.findViewById(R.id.feed);
-
         LinearLayoutManager rvManager = new LinearLayoutManager(getActivity());
-
         rv.setLayoutManager(rvManager);
-
         return mView;
     }
 
     private void startService() {
         Intent intent = new Intent(getActivity(), RssService.class);
         intent.putExtra(RssService.RECEIVER, resultReceiver);
+        intent.putExtra(RssService.LINK, fragment_link);
         getActivity().startService(intent);
     }
 }

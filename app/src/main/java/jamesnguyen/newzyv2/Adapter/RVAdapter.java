@@ -1,6 +1,8 @@
 package jamesnguyen.newzyv2.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,10 +45,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
     public void onBindViewHolder(RVAdapter.FeedViewHolder holder, final int position) {
         holder.getTitle().setText(items.get(position).getTitle()); // TITLE
         holder.getPubDate().setText(items.get(position).getPubDate()); //PUBDATE
-
-
-//        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(items.get(position).getLink()));
-//        context.startActivity(browserIntent);
+        holder.setOnClickLink(items.get(position).getLink());
 
         try { //IMAGE LOADING
             Picasso.with(context).load(items.get(position).getImageURL()).fit().centerCrop().into(holder.getImageHolder());
@@ -74,12 +73,28 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
         private TextView title;
         private TextView pubDate;
         private ImageView imageHolder;
+        private View v;
 
         FeedViewHolder(View itemView) {
             super(itemView);
+            v = itemView;
             title = (TextView) itemView.findViewById(R.id.item_title);
             pubDate = (TextView) itemView.findViewById(R.id.item_pubDate);
             imageHolder = (ImageView) itemView.findViewById(R.id.img_thumbnail);
+        }
+
+        public void setOnClickLink(final String link) {
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                    context.startActivity(browserIntent);
+                }
+            });
+        }
+
+        public View getView() {
+            return v;
         }
 
         public TextView getTitle() {

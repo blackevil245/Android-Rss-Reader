@@ -20,7 +20,7 @@ public class RssService extends IntentService {
 
     public static final String ITEMS = "items";
     public static final String RECEIVER = "receiver";
-    private static final String RSS_LINK = "http://www.wired.com/category/gear/feed/";
+    public static final String LINK = "link";
 
     public RssService() {
         super("RssService");
@@ -31,7 +31,7 @@ public class RssService extends IntentService {
         List<RssItem> rssItems = null;
         try {
             RssParser parser = new RssParser();
-            rssItems = parser.parse(getInputStream(RSS_LINK));
+            rssItems = parser.parse(getInputStream(intent.getStringExtra(LINK)));
         } catch (IOException | XmlPullParserException e) {
             Log.w(e.getMessage(), e);
         }

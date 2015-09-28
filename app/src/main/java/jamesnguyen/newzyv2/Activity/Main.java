@@ -1,7 +1,7 @@
 package jamesnguyen.newzyv2.Activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,10 +22,12 @@ import jamesnguyen.newzyv2.R;
 
 public class Main extends AppCompatActivity {
 
-    DrawerLayout mDrawerLayout;
-    ListView mDrawerList;
-    ActionBarDrawerToggle mDrawerToggle;
-    String[] mDrawerListItems;
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private String[] mDrawerListItems;
+    private RssFragment currentRssFragment;
+    private boolean backPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,6 @@ public class Main extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         mDrawerList = (ListView) findViewById(android.R.id.list);
-        mDrawerListItems = getResources().getStringArray(R.array.drawer_list);
 
         /////// INIT TOOLBAR ///////
         EditText app_name = (EditText) findViewById(R.id.search_bar);
@@ -45,12 +46,26 @@ public class Main extends AppCompatActivity {
         assert getSupportActionBar() != null;
 
         /////// SETUP DRAWER ////////
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mDrawerListItems));
+        mDrawerListItems = getResources().getStringArray(R.array.drawer_list);
+        mDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mDrawerListItems));
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int editedPosition = position + 1;
-                Toast.makeText(Main.this, "You selected item " + editedPosition, Toast.LENGTH_SHORT).show();
+                switch (position) {
+                    case 0:
+                        replaceFragment("http://www.wired.com/category/gear/feed/");
+                        Toast.makeText(Main.this, "Tech fragment", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1:
+                        replaceFragment("http://www.wired.com/category/science/feed/");
+                        Toast.makeText(Main.this, "Science fragment", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 2:
+                        replaceFragment("http://www.wired.com/category/design/feed/");
+                        Toast.makeText(Main.this, "Design fragment", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+
                 mDrawerLayout.closeDrawer(mDrawerList);
             }
         });
@@ -76,17 +91,26 @@ public class Main extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle.syncState();
 
-        /////// START RSS FRAGMENT //////
+        /////// START RSS FRAGMENTS //////
         if (savedInstanceState == null) {
-            addRssFragment();
+            addWelcomeFragment();
         }
     }
 
-    private void addRssFragment() {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        RssFragment fragment = new RssFragment();
-        transaction.add(R.id.fragment_container, fragment);
+    private void replaceFragment(String link) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        RssFragment newFragment = new RssFragment(link);
+        transaction.remove(currentRssFragment);
+        transaction.add(R.id.fragment_container, newFragment);
+        currentRssFragment = newFragment;
+        transaction.commit();
+    }
+
+    private void addWelcomeFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        RssFragment fragmentWelcome = new RssFragment("http://www.wired.com/category/photo/feed/");
+        transaction.add(R.id.fragment_container, fragmentWelcome);
+        currentRssFragment = fragmentWelcome;
         transaction.commit();
     }
 
@@ -124,6 +148,25 @@ public class Main extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (backPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        backPressedOnce = true;
+
+        Toast.makeText(Main.this, "Press BACK again to exit!", Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                backPressedOnce = false;
+            }
+        }, 2000);
     }
 
     @Override
