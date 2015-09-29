@@ -10,6 +10,7 @@
     <string name="read_button">Read</string>
 
     <string-array name="drawer_list">
+        <item>All Newzy</item>
         <item>Tech</item>
         <item>Science</item>
         <item>Design</item>

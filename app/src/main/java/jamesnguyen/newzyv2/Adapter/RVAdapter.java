@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jamesnguyen.newzyv2.Model.RssItem;
@@ -21,16 +22,12 @@ import jamesnguyen.newzyv2.R;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
 
-    private static List<RssItem> items = null;
+    private static List<RssItem> items = new ArrayList<>();
     private static Context context;
 
     public RVAdapter(Context context, List<RssItem> items) {
-        this.items = items;
-        this.context = context;
-    }
-
-    public static List<RssItem> getItems() {
-        return items;
+        RVAdapter.items = items;
+        RVAdapter.context = context;
     }
 
     // CREATE NEW CARDVIEW

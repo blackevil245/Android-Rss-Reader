@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import jamesnguyen.newzyv2.Model.RssItem;
@@ -28,10 +29,14 @@ public class RssService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        List<RssItem> rssItems = null;
+        List<List<RssItem>> rssItems = new ArrayList<>();
         try {
             RssParser parser = new RssParser();
-            rssItems = parser.parse(getInputStream(intent.getStringExtra(LINK)));
+            for (String link : intent.getStringArrayListExtra(LINK)) {
+                List<RssItem> single_link = parser.parse(getInputStream(link));
+                rssItems.add(single_link);
+            }
+
         } catch (IOException | XmlPullParserException e) {
             Log.w(e.getMessage(), e);
         }

@@ -17,15 +17,18 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import jamesnguyen.newzyv2.Fragments.RssFragment;
+import jamesnguyen.newzyv2.Model.SubscriptionManager;
 import jamesnguyen.newzyv2.R;
 
 public class Main extends AppCompatActivity {
 
+    private final SubscriptionManager subscriptionManager = SubscriptionManager.getInstance();
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
-    private String[] mDrawerListItems;
     private boolean backPressedOnce = false;
 
     @Override
@@ -38,6 +41,9 @@ public class Main extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         mDrawerList = (ListView) findViewById(android.R.id.list);
 
+        /////// SUBSCRIPTION LIST ///////
+        subscriptionManager.initList();
+
         /////// INIT TOOLBAR ///////
         EditText app_name = (EditText) findViewById(R.id.search_bar);
 
@@ -45,24 +51,26 @@ public class Main extends AppCompatActivity {
         assert getSupportActionBar() != null;
 
         /////// SETUP DRAWER ////////
-        mDrawerListItems = getResources().getStringArray(R.array.drawer_list);
+        String[] mDrawerListItems = getResources().getStringArray(R.array.drawer_list);
         mDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_item, R.id.menu_item_title, mDrawerListItems));
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        replaceFragment("http://www.wired.com/category/gear/feed/");
-                        Toast.makeText(Main.this, "Tech fragment", Toast.LENGTH_SHORT).show();
+                        replaceFragment(SubscriptionManager.getAll(), 95);
                         break;
                     case 1:
-                        replaceFragment("http://www.wired.com/category/science/feed/");
-                        Toast.makeText(Main.this, "Science fragment", Toast.LENGTH_SHORT).show();
+                        replaceFragment(subscriptionManager.getLink(0), 0);
                         break;
                     case 2:
-                        replaceFragment("http://www.wired.com/category/design/feed/");
-                        Toast.makeText(Main.this, "Design fragment", Toast.LENGTH_SHORT).show();
+                        replaceFragment(subscriptionManager.getLink(1), 0);
                         break;
+                    case 3:
+                        replaceFragment(subscriptionManager.getLink(2), 0);
+                        break;
+                    default:
+                        replaceFragment(subscriptionManager.getLink(position - 1), 0);
                 }
 
                 mDrawerLayout.closeDrawer(mDrawerList);
@@ -92,13 +100,15 @@ public class Main extends AppCompatActivity {
 
         /////// START RSS FRAGMENTS //////
         if (savedInstanceState == null) {
-            addWelcomeFragment("http://www.wired.com/category/photo/feed/");
+            addWelcomeFragment(SubscriptionManager.getAll(), 95);
         }
     }
 
-    private void replaceFragment(String link) {
+    private void replaceFragment(ArrayList<String> links, int id) {
         Bundle bundle = new Bundle();
-        bundle.putString(RssFragment.LINK, link);
+        bundle.putStringArrayList(RssFragment.LINKS, links);
+        bundle.putInt(RssFragment.ID, id);
+
         RssFragment newFragment = new RssFragment();
         newFragment.setArguments(bundle);
 
@@ -109,9 +119,11 @@ public class Main extends AppCompatActivity {
         transaction.commit();
     }
 
-    private void addWelcomeFragment(String link) {
+    private void addWelcomeFragment(ArrayList<String> links, int id) {
         Bundle bundle = new Bundle();
-        bundle.putString(RssFragment.LINK, link);
+        bundle.putStringArrayList(RssFragment.LINKS, links);
+        bundle.putInt(RssFragment.ID, id);
+
         RssFragment fragmentWelcome = new RssFragment();
         fragmentWelcome.setArguments(bundle);
 
