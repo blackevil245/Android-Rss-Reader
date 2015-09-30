@@ -9,6 +9,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import jamesnguyen.newzyv2.Model.RssItem;
 public class RssParser {
     private final String nameSpace = null; //No name space
 
-    public List<RssItem> parse(InputStream inputStream) throws XmlPullParserException, IOException {
+    public List<RssItem> parse(InputStream inputStream) throws XmlPullParserException, IOException, ParseException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -29,7 +30,7 @@ public class RssParser {
         }
     }
 
-    public List<RssItem> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
+    public List<RssItem> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
         String channel_title = null;
         String title = null;
         String link = null;
@@ -92,7 +93,7 @@ public class RssParser {
 
     private String readPubDate(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, nameSpace, "pubDate");
-        String pubDate = readText(parser).substring(0, 22);
+        String pubDate = readText(parser).substring(0, 25);
         parser.require(XmlPullParser.END_TAG, nameSpace, "pubDate");
         return pubDate;
 

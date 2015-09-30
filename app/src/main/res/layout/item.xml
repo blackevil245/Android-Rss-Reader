@@ -37,11 +37,11 @@
 
             <TextView
                 android:id="@+id/item_title"
-                android:layout_width="220dp"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:maxWidth="220dp"
+                android:maxWidth="250dp"
                 android:text="Title"
                 android:textColor="@color/primary_text"
                 android:textSize="20sp"/>
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/item_title"
                 android:layout_centerHorizontal="true"
-                android:maxWidth="220dp"
+                android:maxLines="1"
                 android:text="Channel Title"
                 android:textColor="@color/primary_text"/>
 
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/channel_title"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:maxWidth="220dp"
                 android:text="Wed, Sep 23rd 2015 15:15:36 - 0700"

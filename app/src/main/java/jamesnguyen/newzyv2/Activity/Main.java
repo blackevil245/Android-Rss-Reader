@@ -93,6 +93,7 @@ public class Main extends AppCompatActivity {
                         break;
                     default:
                         replaceFragment(subscriptionManager.getLink(position - 1), false, false);
+                        break;
                 }
 
                 mDrawerLayout.closeDrawer(mDrawerList);

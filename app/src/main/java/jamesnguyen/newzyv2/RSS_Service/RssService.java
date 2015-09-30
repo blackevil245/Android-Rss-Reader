@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,9 +43,7 @@ public class RssService extends IntentService {
                 List<RssItem> single_link = parser.parse(getInputStream(intent.getStringArrayListExtra(LINK).get(0)));
                 rssItems.add(single_link);
             }
-
-
-        } catch (IOException | XmlPullParserException e) {
+        } catch (IOException | XmlPullParserException | ParseException e) {
             Log.w(e.getMessage(), e);
         }
 

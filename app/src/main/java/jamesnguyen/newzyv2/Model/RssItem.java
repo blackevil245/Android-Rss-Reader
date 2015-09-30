@@ -1,23 +1,38 @@
 package jamesnguyen.newzyv2.Model;
 
+import android.support.annotation.NonNull;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
-public class RssItem {
+public class RssItem implements Comparable<RssItem> {
 
     Document description;
+    Date formattedDate;
     private String channel_title, title, link, pubDate;
 
-    public RssItem(String channel_title, String title, String link, String pubDate, Document description) {
+    public RssItem(String channel_title, String title, String link,
+                   String pubDate, Document description) throws ParseException {
         this.channel_title = channel_title;
         this.title = title;
         this.link = link;
         this.pubDate = pubDate;
+        formattedDate = changePubdateFormat(this.pubDate);
         this.description = description;
+    }
+
+    public Date changePubdateFormat(String pubDate) throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.ENGLISH);
+        return formatter.parse(this.pubDate);
     }
 
     public String getChannelTitle() {
@@ -69,6 +84,16 @@ public class RssItem {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+        assert _link != null;
         return _link.toString();
+    }
+
+    @Override
+    public int compareTo(@NonNull RssItem another) {
+        return getDateTime().compareTo(another.getDateTime());
+    }
+
+    public Date getDateTime() {
+        return formattedDate;
     }
 }

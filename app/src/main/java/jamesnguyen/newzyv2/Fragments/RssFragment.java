@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jamesnguyen.newzyv2.Adapter.RVAdapter;
@@ -37,6 +38,8 @@ public class RssFragment extends Fragment {
                     appendinglist.add(b);
                 }
             }
+            Collections.sort(appendinglist);
+            Collections.reverse(appendinglist);
             RVAdapter adapter = new RVAdapter(getActivity(), appendinglist);
             rv.setAdapter(adapter);
         }
