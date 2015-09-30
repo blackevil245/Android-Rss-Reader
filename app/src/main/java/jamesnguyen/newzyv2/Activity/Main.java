@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public class Main extends AppCompatActivity {
         subscriptionManager.initList();
 
         /////// INIT TOOLBAR ///////
-        EditText app_name = (EditText) findViewById(R.id.search_bar);
+        final EditText app_name = (EditText) findViewById(R.id.search_bar);
+        final TextView app_title = (TextView) findViewById(R.id.app_title);
 
         setSupportActionBar(toolbar);
         assert getSupportActionBar() != null;
@@ -58,19 +60,39 @@ public class Main extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        replaceFragment(SubscriptionManager.getAll(), 95);
+                        replaceFragment(SubscriptionManager.getAll(), true, false);
+                        app_title.setText("All Newzy");
                         break;
                     case 1:
-                        replaceFragment(subscriptionManager.getLink(0), 0);
+                        replaceFragment(subscriptionManager.getLink(0), false, false);
+                        app_title.setText("Tech");
                         break;
                     case 2:
-                        replaceFragment(subscriptionManager.getLink(1), 0);
+                        replaceFragment(subscriptionManager.getLink(1), false, false);
+                        app_title.setText("Science");
                         break;
                     case 3:
-                        replaceFragment(subscriptionManager.getLink(2), 0);
+                        replaceFragment(subscriptionManager.getLink(2), false, false);
+                        app_title.setText("Design");
+                        break;
+                    case 4:
+                        replaceFragment(subscriptionManager.getLink(3), false, false);
+                        app_title.setText("PC World");
+                        break;
+                    case 5:
+                        replaceFragment(subscriptionManager.getLink(4), false, false);
+                        app_title.setText("Dota 2");
+                        break;
+                    case 6:
+                        replaceFragment(subscriptionManager.getLink(5), false, false);
+                        app_title.setText("CS:GO");
+                        break;
+                    case 7:
+                        replaceFragment(subscriptionManager.getLink(6), false, false);
+                        app_title.setText("onGamers");
                         break;
                     default:
-                        replaceFragment(subscriptionManager.getLink(position - 1), 0);
+                        replaceFragment(subscriptionManager.getLink(position - 1), false, false);
                 }
 
                 mDrawerLayout.closeDrawer(mDrawerList);
@@ -100,37 +122,29 @@ public class Main extends AppCompatActivity {
 
         /////// START RSS FRAGMENTS //////
         if (savedInstanceState == null) {
-            addWelcomeFragment(SubscriptionManager.getAll(), 95);
+            replaceFragment(SubscriptionManager.getAll(), true, true);
+            app_title.setText("All Newzy");
         }
     }
 
-    private void replaceFragment(ArrayList<String> links, int id) {
+    private void replaceFragment(ArrayList<String> links, boolean showAll, boolean add) {
         Bundle bundle = new Bundle();
         bundle.putStringArrayList(RssFragment.LINKS, links);
-        bundle.putInt(RssFragment.ID, id);
+        bundle.putBoolean(RssFragment.ALL, showAll);
 
         RssFragment newFragment = new RssFragment();
         newFragment.setArguments(bundle);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-//        currentRssFragment = newFragment;
-        transaction.commit();
-    }
-
-    private void addWelcomeFragment(ArrayList<String> links, int id) {
-        Bundle bundle = new Bundle();
-        bundle.putStringArrayList(RssFragment.LINKS, links);
-        bundle.putInt(RssFragment.ID, id);
-
-        RssFragment fragmentWelcome = new RssFragment();
-        fragmentWelcome.setArguments(bundle);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_container, fragmentWelcome);
-//        currentRssFragment = fragmentWelcome;
-        transaction.commit();
+        if (add) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.fragment_container, newFragment);
+            transaction.commit();
+        } else {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 
     @Override

@@ -22,6 +22,7 @@ public class RssService extends IntentService {
     public static final String ITEMS = "items";
     public static final String RECEIVER = "receiver";
     public static final String LINK = "link";
+    public static final String SHOW_ALL = "all";
 
     public RssService() {
         super("RssService");
@@ -32,10 +33,16 @@ public class RssService extends IntentService {
         List<List<RssItem>> rssItems = new ArrayList<>();
         try {
             RssParser parser = new RssParser();
-            for (String link : intent.getStringArrayListExtra(LINK)) {
-                List<RssItem> single_link = parser.parse(getInputStream(link));
+            if (intent.getBooleanExtra(SHOW_ALL, false)) {
+                for (String link : intent.getStringArrayListExtra(LINK)) {
+                    List<RssItem> single_link = parser.parse(getInputStream(link));
+                    rssItems.add(single_link);
+                }
+            } else {
+                List<RssItem> single_link = parser.parse(getInputStream(intent.getStringArrayListExtra(LINK).get(0)));
                 rssItems.add(single_link);
             }
+
 
         } catch (IOException | XmlPullParserException e) {
             Log.w(e.getMessage(), e);

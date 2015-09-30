@@ -30,6 +30,7 @@ public class RssParser {
     }
 
     public List<RssItem> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
+        String channel_title = null;
         String title = null;
         String link = null;
         String pubDate = null;
@@ -45,6 +46,9 @@ public class RssParser {
                 } else if (parser.getName().equalsIgnoreCase("title")) {
                     if (insideItem)
                         title = readTitle(parser); //extract the title of article
+                    else {
+                        channel_title = "<< " + readTitle(parser) + " >>"; // extract channel title
+                    }
                 } else if (parser.getName().equalsIgnoreCase("link")) {
                     if (insideItem)
                         link = readLink(parser); //extract the link of article
@@ -60,8 +64,8 @@ public class RssParser {
             }
             eventType = parser.next();
 
-            if (title != null && link != null && pubDate != null && description != null) {
-                RssItem item = new RssItem(title, link, pubDate, description);
+            if (channel_title != null && title != null && link != null && pubDate != null && description != null) {
+                RssItem item = new RssItem(channel_title, title, link, pubDate, description);
                 items.add(item);
                 title = null;
                 link = null;
@@ -98,8 +102,7 @@ public class RssParser {
         parser.require(XmlPullParser.START_TAG, nameSpace, "description");
         String description = readText(parser);
         parser.require(XmlPullParser.END_TAG, nameSpace, "description");
-        Document doc = Jsoup.parseBodyFragment(description);
-        return doc;
+        return Jsoup.parseBodyFragment(description);
     }
 
     private String readText(XmlPullParser parser) throws XmlPullParserException, IOException {

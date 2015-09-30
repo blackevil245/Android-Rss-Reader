@@ -30,6 +30,11 @@ public class SubscriptionManager {
         this.addLink("http://www.wired.com/category/gear/feed/");
         this.addLink("http://www.wired.com/category/science/feed/");
         this.addLink("http://www.wired.com/category/design/feed/");
+        this.addLink("http://www.pcworld.com/index.rss");
+        this.addLink("http://blog.dota2.com/feed/");
+        this.addLink("http://blog.counter-strike.net/index.php/feed/");
+        this.addLink("http://www.ongamers.com/feeds/mashup/");
+
     }
 
     public void addLink(String link) {

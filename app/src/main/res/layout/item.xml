@@ -20,7 +20,8 @@
             android:id="@+id/img_thumbnail"
             android:layout_width="fill_parent"
             android:layout_height="200dp"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -46,10 +47,20 @@
                 android:textSize="20sp"/>
 
             <TextView
-                android:id="@+id/item_pubDate"
+                android:id="@+id/channel_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/item_title"
+                android:layout_centerHorizontal="true"
+                android:maxWidth="220dp"
+                android:text="Channel Title"
+                android:textColor="@color/primary_text"/>
+
+            <TextView
+                android:id="@+id/item_pubDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/channel_title"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:gravity="center"

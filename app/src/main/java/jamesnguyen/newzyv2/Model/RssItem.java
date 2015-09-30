@@ -10,13 +10,22 @@ import java.net.URL;
 public class RssItem {
 
     Document description;
-    private String title, link, pubDate;
+    private String channel_title, title, link, pubDate;
 
-    public RssItem(String title, String link, String pubDate, Document description) {
+    public RssItem(String channel_title, String title, String link, String pubDate, Document description) {
+        this.channel_title = channel_title;
         this.title = title;
         this.link = link;
         this.pubDate = pubDate;
         this.description = description;
+    }
+
+    public String getChannelTitle() {
+        return channel_title;
+    }
+
+    public void setChannelTitle(String channel_title) {
+        this.channel_title = channel_title;
     }
 
     public String getTitle() {

@@ -40,12 +40,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
     // REPLACE DATA ON NEW CARDVIEW
     @Override
     public void onBindViewHolder(RVAdapter.FeedViewHolder holder, final int position) {
+        holder.getChannel_title().setText(items.get(position).getChannelTitle()); // SET CHANNEL ITEM
         holder.getTitle().setText(items.get(position).getTitle()); // TITLE
         holder.getPubDate().setText(items.get(position).getPubDate()); //PUBDATE
-        holder.setOnClickLink(items.get(position).getLink());
+        holder.setOnClickLink(items.get(position).getLink()); // ONCICK LINK
 
         try { //IMAGE LOADING
-            Picasso.with(context).load(items.get(position).getImageURL()).fit().centerCrop().into(holder.getImageHolder());
+            Picasso.with(context).load(items.get(position).getImageURL()).error(context.getResources().getColor(android.R.color.white)).fit().centerCrop().into(holder.getImageHolder());
         } catch (Exception e) {
             Log.w(e.toString(), "Cant get to image URL");
         }
@@ -67,6 +68,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
     }
 
     public static class FeedViewHolder extends RecyclerView.ViewHolder {
+        private TextView channel_title;
         private TextView title;
         private TextView pubDate;
         private ImageView imageHolder;
@@ -75,6 +77,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
         FeedViewHolder(View itemView) {
             super(itemView);
             v = itemView;
+            channel_title = (TextView) itemView.findViewById(R.id.channel_title);
             title = (TextView) itemView.findViewById(R.id.item_title);
             pubDate = (TextView) itemView.findViewById(R.id.item_pubDate);
             imageHolder = (ImageView) itemView.findViewById(R.id.img_thumbnail);
@@ -92,6 +95,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
 
         public View getView() {
             return v;
+        }
+
+        public TextView getChannel_title() {
+            return channel_title;
         }
 
         public TextView getTitle() {
