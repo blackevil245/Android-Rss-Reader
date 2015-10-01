@@ -11,14 +11,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
 
 import jamesnguyen.newzyv2.Model.RssItem;
 
 public class RssParser {
     private final String nameSpace = null; //No name space
 
-    public List<RssItem> parse(InputStream inputStream) throws XmlPullParserException, IOException, ParseException {
+    public ArrayList<RssItem> parse(InputStream inputStream) throws XmlPullParserException, IOException, ParseException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -30,7 +29,7 @@ public class RssParser {
         }
     }
 
-    public List<RssItem> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
+    public ArrayList<RssItem> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
         String channel_title = null;
         String title = null;
         String link = null;
@@ -38,7 +37,7 @@ public class RssParser {
         Document description = null;
         Boolean insideItem = false;
         int eventType = parser.getEventType();
-        List<RssItem> items = new ArrayList<>();
+        ArrayList<RssItem> items = new ArrayList<>();
 
         while (eventType != XmlPullParser.END_DOCUMENT) {
             if (eventType == XmlPullParser.START_TAG) {

@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import jamesnguyen.newzyv2.Model.RssItem;
 import jamesnguyen.newzyv2.R;
@@ -22,10 +21,10 @@ import jamesnguyen.newzyv2.R;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
 
-    private static List<RssItem> items = new ArrayList<>();
+    private static ArrayList<RssItem> items = new ArrayList<>();
     private static Context context;
 
-    public RVAdapter(Context context, List<RssItem> items) {
+    public RVAdapter(Context context, ArrayList<RssItem> items) {
         RVAdapter.items = items;
         RVAdapter.context = context;
     }
