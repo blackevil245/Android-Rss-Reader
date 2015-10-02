@@ -1,19 +1,27 @@
 package jamesnguyen.newzyv2.RSS_Service;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 
+import jamesnguyen.newzyv2.Model.ItemCache;
 import jamesnguyen.newzyv2.Model.RssItem;
 import jamesnguyen.newzyv2.Model.SubscriptionManager;
 
@@ -28,22 +36,33 @@ public class RssService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        ArrayList<ArrayList<RssItem>> rssItems = new ArrayList<>();
-        RssParser parser = new RssParser();
-        for (String link : SubscriptionManager.getInstance().getAll()) {
-            ArrayList<RssItem> single_link = null;
+        if (isNetworkAvailable()) {
+            ArrayList<ArrayList<RssItem>> rssItems = new ArrayList<>();
             try {
-                single_link = parser.parse(getInputStream(link));
-            } catch (XmlPullParserException | IOException | ParseException e) {
-                e.printStackTrace();
+                RssParser parser = new RssParser();
+                for (String link : SubscriptionManager.getInstance().getAll()) {
+                    rssItems.add(parser.parse(getInputStream(link)));
+                }
+                writeStorageFile(rssItems);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(ITEMS, rssItems);
+                ResultReceiver receiver = intent.getParcelableExtra(RECEIVER);
+                receiver.send(0, bundle);
+            } catch (IOException | XmlPullParserException | ParseException e) {
+                Log.w(e.getMessage(), e);
             }
-            rssItems.add(single_link);
+        } else {
+            readStorageFile();
         }
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(ITEMS, rssItems);
-        ResultReceiver receiver = intent.getParcelableExtra(RECEIVER);
-        receiver.send(0, bundle);
+
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     public InputStream getInputStream(String link) {
@@ -54,5 +73,45 @@ public class RssService extends IntentService {
             Log.w("RssApp", "Exception while retrieving the input stream", e);
             return null;
         }
+    }
+
+    public void writeStorageFile(final ArrayList<ArrayList<RssItem>> items) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String filename = "myfile.ser";
+
+                try {
+                    FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+                    ObjectOutputStream out = new ObjectOutputStream(fos);
+                    out.writeObject(items);
+                    out.flush();
+                    out.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void readStorageFile() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String filename = "myfile.ser";
+
+                try {
+                    FileInputStream fis = openFileInput(filename);
+                    ObjectInputStream in = new ObjectInputStream(fis);
+                    ItemCache.getInstance().setTempCache((ArrayList<ArrayList<RssItem>>) in.readObject());
+                    in.close();
+
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }

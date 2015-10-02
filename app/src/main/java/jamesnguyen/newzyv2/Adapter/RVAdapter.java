@@ -92,15 +92,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
             });
         }
 
-//        public void setOnLongClick() {
-//            v.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    return false;
-//                }
-//            });
-//        }
-
         public View getView() {
             return v;
         }

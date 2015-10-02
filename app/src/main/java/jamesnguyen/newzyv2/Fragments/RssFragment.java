@@ -20,7 +20,6 @@ public class RssFragment extends Fragment {
     public final static String ID = "id";
 
     protected View mView;
-    private RecyclerView rv;
     private int requestID;
 
     @Override
@@ -32,25 +31,26 @@ public class RssFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         this.mView = inflater.inflate(R.layout.rss_fragment, container, false);
 
         // SETUP RECYCLER VIEW
-        rv = (RecyclerView) mView.findViewById(R.id.feed);
+        RecyclerView rv = (RecyclerView) mView.findViewById(R.id.feed);
         LinearLayoutManager rvManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(rvManager);
 
-        // GET DATA FOR FRAGMENT
-        loadData();
+        ArrayList<RssItem> data = loadData();
+        RVAdapter adapter = new RVAdapter(getActivity(), data);
+        rv.setAdapter(adapter);
 
         //RETURN
         return mView;
     }
 
-    private void loadData() {
+    private ArrayList<RssItem> loadData() {
         ArrayList<RssItem> appendinglist = ItemCache.getInstance().getItems(this.requestID);
         Collections.sort(appendinglist);
         Collections.reverse(appendinglist);
-        RVAdapter adapter = new RVAdapter(getActivity(), appendinglist);
-        rv.setAdapter(adapter);
+        return appendinglist;
     }
 }

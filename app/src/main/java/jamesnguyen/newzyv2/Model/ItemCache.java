@@ -1,8 +1,10 @@
 package jamesnguyen.newzyv2.Model;
 
+import android.app.Application;
+
 import java.util.ArrayList;
 
-public class ItemCache {
+public class ItemCache extends Application {
 
     public static int _ALL_LINK = 99;
     public static int _1_LINK = 0;
@@ -13,7 +15,7 @@ public class ItemCache {
     public static int _6_LINK = 5;
     public static int _7_LINK = 6;
     private static ItemCache instance = new ItemCache();
-    private ArrayList<ArrayList<RssItem>> tempCache = new ArrayList<>();
+    private static ArrayList<ArrayList<RssItem>> tempCache = new ArrayList<>();
 
     private ItemCache() {
     }
@@ -40,7 +42,7 @@ public class ItemCache {
             }
             return list;
         } else {
-            return instance.tempCache.get(requestID);
+            return tempCache.get(requestID);
         }
     }
 }

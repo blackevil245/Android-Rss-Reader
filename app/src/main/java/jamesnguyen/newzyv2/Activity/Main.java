@@ -1,5 +1,6 @@
 package jamesnguyen.newzyv2.Activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +24,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import jamesnguyen.newzyv2.Fragments.RssFragment;
+import jamesnguyen.newzyv2.Fragments.SettingsFragment;
+import jamesnguyen.newzyv2.Fragments.WelcomeFragment;
 import jamesnguyen.newzyv2.Model.ItemCache;
 import jamesnguyen.newzyv2.Model.RssItem;
 import jamesnguyen.newzyv2.Model.SubscriptionManager;
@@ -36,10 +39,11 @@ public class Main extends AppCompatActivity {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             ArrayList<ArrayList<RssItem>> receivedPackage = (ArrayList<ArrayList<RssItem>>) resultData.getSerializable(RssService.ITEMS);
-            assert receivedPackage != null;
             ItemCache.getInstance().setTempCache(receivedPackage);
         }
     };
+    private ProgressDialog loadDialog;
+
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -49,6 +53,7 @@ public class Main extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getApplicationContext();
 
         // SUBSCRIPTION LIST
         SubscriptionManager.getInstance().initList();
@@ -135,8 +140,13 @@ public class Main extends AppCompatActivity {
 
         // START RSS FRAGMENTS
         if (savedInstanceState == null) {
-            replaceFragment(ItemCache._ALL_LINK, true);
-            app_title.setText("All Newzy");
+            WelcomeFragment welcomeFragment = new WelcomeFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.fragment_container, welcomeFragment);
+            transaction.commit();
+//            replaceFragment(ItemCache._ALL_LINK, true);
+            replaceFragment(ItemCache._ALL_LINK, false);
+            app_title.setText("Home");
         }
     }
 
@@ -146,10 +156,42 @@ public class Main extends AppCompatActivity {
         mDrawerToggle.syncState();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     private void startService() {
-        Intent intent = new Intent(Main.this, RssService.class);
-        intent.putExtra(RssService.RECEIVER, resultReceiver);
-        Main.this.startService(intent);
+        loadDialog = ProgressDialog.show(Main.this, "Please wait ...",
+                "Loading contents", true);
+        loadDialog.setCancelable(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Intent intent = new Intent(Main.this, RssService.class);
+                    intent.putExtra(RssService.RECEIVER, resultReceiver);
+                    Main.this.startService(intent);
+                    Thread.sleep(5000);
+                } catch (Exception e) {
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadDialog.dismiss();
+                        // DRAWER PREVIEW
+                        mDrawerLayout.openDrawer(mDrawerList);
+                        new Handler().postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                mDrawerLayout.closeDrawer(mDrawerList);
+                            }
+                        }, 3000);
+                    }
+                });
+            }
+        }).start();
     }
 
     private void replaceFragment(int request_id, boolean add) {
@@ -190,15 +232,20 @@ public class Main extends AppCompatActivity {
                     mDrawerLayout.openDrawer(mDrawerList);
                 }
                 return true;
-            case R.id.action_search:
-//                openSearch();
-                return true;
             case R.id.action_settings:
-//                openSettings();
+                openSettings();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    protected void openSettings() {
+        SettingsFragment newFragment = SettingsFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
@@ -217,7 +264,7 @@ public class Main extends AppCompatActivity {
             public void run() {
                 backPressedOnce = false;
             }
-        }, 2000);
+        }, 300);
     }
 
     @Override

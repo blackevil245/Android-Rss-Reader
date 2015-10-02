@@ -2,11 +2,7 @@ package jamesnguyen.newzyv2.Model;
 
 import android.support.annotation.NonNull;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,20 +10,20 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class RssItem implements Comparable<RssItem> {
+public class RssItem implements Serializable, Comparable<RssItem> {
 
-    Document description;
     Date formattedDate;
-    private String channel_title, title, link, pubDate;
+    private String channel_title, title, link, pubDate, description, imageURL;
 
     public RssItem(String channel_title, String title, String link,
-                   String pubDate, Document description) throws ParseException {
+                   String pubDate, String description, String imageURL) throws ParseException {
         this.channel_title = channel_title;
         this.title = title;
         this.link = link;
         this.pubDate = pubDate;
         formattedDate = changePubdateFormat(this.pubDate);
         this.description = description;
+        this.imageURL = imageURL;
     }
 
     public Date changePubdateFormat(String pubDate) throws ParseException {
@@ -67,25 +63,16 @@ public class RssItem implements Comparable<RssItem> {
         this.pubDate = pubDate;
     }
 
-    public Document getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(Document description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
     public String getImageURL() {
-        Elements img = description.getElementsByTag("img");
-        String link = img.attr("src");
-        URL _link = null;
-        try {
-            _link = new URL(link);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        assert _link != null;
-        return _link.toString();
+        return this.imageURL;
     }
 
     @Override

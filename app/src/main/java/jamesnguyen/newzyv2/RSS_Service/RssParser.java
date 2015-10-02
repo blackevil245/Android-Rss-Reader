@@ -2,6 +2,8 @@ package jamesnguyen.newzyv2.RSS_Service;
 
 import android.util.Xml;
 
+import junit.framework.Assert;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xmlpull.v1.XmlPullParser;
@@ -13,6 +15,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 import jamesnguyen.newzyv2.Model.RssItem;
+import jamesnguyen.newzyv2.Utilities.RssItemProcessor;
 
 public class RssParser {
     private final String nameSpace = null; //No name space
@@ -25,7 +28,11 @@ public class RssParser {
             parser.nextTag();
             return readFeed(parser);
         } finally {
-            inputStream.close();
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                Assert.assertEquals(e.getLocalizedMessage(), "Inputstream closed");
+            }
         }
     }
 
@@ -34,6 +41,7 @@ public class RssParser {
         String title = null;
         String link = null;
         String pubDate = null;
+        String imageURL = null;
         Document description = null;
         Boolean insideItem = false;
         int eventType = parser.getEventType();
@@ -57,7 +65,7 @@ public class RssParser {
                         pubDate = readPubDate(parser); //extract the link of article
                 } else if (parser.getName().equalsIgnoreCase("description")) {
                     if (insideItem)
-                        description = readDescription(parser); //extract the link of article
+                        description = readDescription(parser); //extract the description of article
                 }
             } else if (eventType == XmlPullParser.END_TAG && parser.getName().equalsIgnoreCase("item")) {
                 insideItem = false;
@@ -65,7 +73,8 @@ public class RssParser {
             eventType = parser.next();
 
             if (channel_title != null && title != null && link != null && pubDate != null && description != null) {
-                RssItem item = new RssItem(channel_title, title, link, pubDate, description);
+                imageURL = RssItemProcessor.getInstance().parseImageURL(description);
+                RssItem item = new RssItem(channel_title, title, link, pubDate, description.toString(), imageURL);
                 items.add(item);
                 title = null;
                 link = null;
