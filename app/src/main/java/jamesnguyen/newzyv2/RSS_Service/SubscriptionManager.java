@@ -1,4 +1,4 @@
-package jamesnguyen.newzyv2.Model;
+package jamesnguyen.newzyv2.RSS_Service;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -9,7 +9,8 @@ import android.os.ResultReceiver;
 import java.util.ArrayList;
 
 import jamesnguyen.newzyv2.Activity.Main;
-import jamesnguyen.newzyv2.RSS_Service.RssService;
+import jamesnguyen.newzyv2.Model.ItemCache;
+import jamesnguyen.newzyv2.Model.RssItem;
 
 public class SubscriptionManager {
 
@@ -60,6 +61,8 @@ public class SubscriptionManager {
         addLink("http://blog.counter-strike.net/index.php/feed/");
         /* Request ID = 5 */
         addLink("http://www.ongamers.com/feeds/mashup/");
+        /* Request ID = 6 */
+        addLink("http://feeds.feedburner.com/crunchgear");
 
         TITLE.add("All Newzy");
         TITLE.add("Tech");
@@ -86,23 +89,8 @@ public class SubscriptionManager {
                     intent.putExtra(RssService.RECEIVER, resultReceiver);
                     Main.mainActivity.startService(intent);
                     Thread.sleep(5000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
-                Main.mainActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadDialog.dismiss();
-                        // DRAWER PREVIEW
-                        Main.getDrawerLayout().openDrawer(Main.getDrawerList());
-                        new Handler().postDelayed(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                Main.getDrawerLayout().closeDrawer(Main.getDrawerList());
-                            }
-                        }, 3000);
-                    }
-                });
             }
         }).start();
     }

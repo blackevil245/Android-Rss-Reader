@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import jamesnguyen.newzyv2.Activity.Main;
 import jamesnguyen.newzyv2.Model.ItemCache;
 import jamesnguyen.newzyv2.Model.RssItem;
-import jamesnguyen.newzyv2.Model.SubscriptionManager;
 
 public class RssService extends IntentService {
 
@@ -79,7 +78,7 @@ public class RssService extends IntentService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String filename = "myfile.ser";
+                String filename = "NewzyData.ser";
 
                 try {
                     FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
@@ -100,7 +99,7 @@ public class RssService extends IntentService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String filename = "myfile.ser";
+                String filename = "NewzyData.ser";
 
                 try {
                     FileInputStream fis = openFileInput(filename);

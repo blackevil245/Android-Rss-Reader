@@ -18,13 +18,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import jamesnguyen.newzyv2.Fragments.RssFragment;
 import jamesnguyen.newzyv2.Fragments.SettingsFragment;
-import jamesnguyen.newzyv2.Fragments.WelcomeFragment;
-import jamesnguyen.newzyv2.Model.SubscriptionManager;
 import jamesnguyen.newzyv2.R;
+import jamesnguyen.newzyv2.RSS_Service.SubscriptionManager;
+import jamesnguyen.newzyv2.Utilities.SettingsManager;
 
 public class Main extends AppCompatActivity {
 
@@ -49,7 +50,27 @@ public class Main extends AppCompatActivity {
         getApplicationContext();
         mainActivity = this;
 
-        // SUBSCRIPTION LIST
+        // LOAD SETTINGS
+        final File file_setting = new File(getFilesDir() + File.separator + "Newzy_config.ini");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (file_setting.exists()) {
+                    SettingsManager.getInstance().readSettingsFile();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Main.this, getFilesDir().toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    SettingsManager.getInstance().writeSettingsFile();
+                }
+            }
+        }).start();
+
+
+        // INIT SUBSCRIPTION LIST
         SubscriptionManager.getInstance().initList();
 
         // INIT DATA CACHE
@@ -76,7 +97,7 @@ public class Main extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         requestID = new ArrayList<>();
-                        for (int i = 0; i <= 5; i++) {
+                        for (int i = 0; i <= (SubscriptionManager.getInstance().getAll().size() - 1); i++) {
                             requestID.add(i);
                         }
                         replaceFragment(requestID, false);
@@ -86,7 +107,7 @@ public class Main extends AppCompatActivity {
                         requestID = new ArrayList<>();
                         requestID.add(position - 1);
                         replaceFragment(requestID, false);
-                        app_title.setText(SubscriptionManager.getInstance().getTitle(position + 1));
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
                 }
 
                 mDrawerLayout.closeDrawer(mDrawerList);
@@ -114,12 +135,19 @@ public class Main extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle.syncState();
 
-        // START RSS FRAGMENTS
+        // START RSS READER + show ALL Fragment
         if (savedInstanceState == null) {
-            WelcomeFragment welcomeFragment = new WelcomeFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.fragment_container, welcomeFragment);
-            transaction.commit();
+            final ArrayList<Integer> requestID = new ArrayList<>();
+            for (int i = 0; i <= (SubscriptionManager.getInstance().getAll().size() - 1); i++) {
+                requestID.add(i);
+            }
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    replaceFragment(requestID, true);
+                }
+            }, 3000);
             app_title.setText("Home");
         }
     }
@@ -133,6 +161,7 @@ public class Main extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        SettingsManager.getInstance().writeSettingsFile();
     }
 
     private void replaceFragment(ArrayList<Integer> request_id, boolean add) {
@@ -188,24 +217,24 @@ public class Main extends AppCompatActivity {
         transaction.commit();
     }
 
-    @Override
-    public void onBackPressed() {
-        if (backPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
-
-        backPressedOnce = true;
-
-        Toast.makeText(Main.this, "Press BACK again to exit!", Toast.LENGTH_SHORT).show();
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                backPressedOnce = false;
-            }
-        }, 300);
-    }
+//    @Override
+//    public void onBackPressed() {
+//        if (backPressedOnce) {
+//            super.onBackPressed();
+//            return;
+//        }
+//
+//        backPressedOnce = true;
+//
+//        Toast.makeText(Main.this, "Press BACK again to exit!", Toast.LENGTH_SHORT).show();
+//        new Handler().postDelayed(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                backPressedOnce = false;
+//            }
+//        }, 300);
+//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

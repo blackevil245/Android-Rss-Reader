@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import jamesnguyen.newzyv2.Model.RssItem;
 import jamesnguyen.newzyv2.R;
+import jamesnguyen.newzyv2.Utilities.SettingsManager;
 
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
@@ -45,7 +46,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.FeedViewHolder> {
         holder.setOnClickLink(items.get(position).getLink()); // ONCICK LINK
 
         try { //IMAGE LOADING
-            Picasso.with(context).load(items.get(position).getImageURL()).error(context.getResources().getColor(android.R.color.white)).fit().centerCrop().into(holder.getImageHolder());
+            if (SettingsManager.getInstance().isImageLoadAllowed()) {
+                Picasso.with(context).load(items.get(position).getImageURL()).error(context.getResources().getColor(android.R.color.white)).fit().centerCrop().into(holder.getImageHolder());
+            }
         } catch (Exception e) {
             Log.w(e.toString(), "Cant get to image URL");
         }

@@ -44,6 +44,7 @@ public class RssParser {
         String imageURL = null;
         Document description = null;
         Boolean insideItem = false;
+        Boolean channelTagAcquired = false;
         int eventType = parser.getEventType();
         ArrayList<RssItem> items = new ArrayList<>();
 
@@ -55,7 +56,10 @@ public class RssParser {
                     if (insideItem)
                         title = readTitle(parser); //extract the title of article
                     else {
-                        channel_title = "<< " + readTitle(parser) + " >>"; // extract channel title
+                        if (!channelTagAcquired) {
+                            channel_title = "<< " + readTitle(parser) + " >>"; // extract channel title
+                            channelTagAcquired = true;
+                        }
                     }
                 } else if (parser.getName().equalsIgnoreCase("link")) {
                     if (insideItem)
@@ -82,6 +86,7 @@ public class RssParser {
                 description = null;
             }
         }
+        channelTagAcquired = false;
         return items;
     }
 
