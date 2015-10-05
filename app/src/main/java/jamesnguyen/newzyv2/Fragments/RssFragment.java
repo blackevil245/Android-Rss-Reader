@@ -20,11 +20,11 @@ public class RssFragment extends Fragment {
     public final static String ID = "id";
 
     protected View mView;
-    private int requestID;
+    private ArrayList<Integer> requestID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        requestID = this.getArguments().getInt(ID);
+        requestID = this.getArguments().getIntegerArrayList(ID);
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }

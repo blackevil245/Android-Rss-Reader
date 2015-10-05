@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -21,6 +22,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 
+import jamesnguyen.newzyv2.Activity.Main;
 import jamesnguyen.newzyv2.Model.ItemCache;
 import jamesnguyen.newzyv2.Model.RssItem;
 import jamesnguyen.newzyv2.Model.SubscriptionManager;
@@ -54,8 +56,6 @@ public class RssService extends IntentService {
         } else {
             readStorageFile();
         }
-
-
     }
 
     private boolean isNetworkAvailable() {
@@ -104,9 +104,15 @@ public class RssService extends IntentService {
 
                 try {
                     FileInputStream fis = openFileInput(filename);
-                    ObjectInputStream in = new ObjectInputStream(fis);
-                    ItemCache.getInstance().setTempCache((ArrayList<ArrayList<RssItem>>) in.readObject());
-                    in.close();
+                    if (fis == null) {
+                        Toast.makeText(Main.mainActivity, "Please open networks for first time data loading..." +
+                                "", Toast.LENGTH_SHORT).show();
+                        Main.mainActivity.finish();
+                    } else {
+                        ObjectInputStream in = new ObjectInputStream(fis);
+                        ItemCache.getInstance().setTempCache((ArrayList<ArrayList<RssItem>>) in.readObject());
+                        in.close();
+                    }
 
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();

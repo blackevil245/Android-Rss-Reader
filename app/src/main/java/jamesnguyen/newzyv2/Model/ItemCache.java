@@ -3,17 +3,10 @@ package jamesnguyen.newzyv2.Model;
 import android.app.Application;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ItemCache extends Application {
 
-    public static int _ALL_LINK = 99;
-    public static int _1_LINK = 0;
-    public static int _2_LINK = 1;
-    public static int _3_LINK = 2;
-    public static int _4_LINK = 3;
-    public static int _5_LINK = 4;
-    public static int _6_LINK = 5;
-    public static int _7_LINK = 6;
     private static ItemCache instance = new ItemCache();
     private static ArrayList<ArrayList<RssItem>> tempCache = new ArrayList<>();
 
@@ -32,17 +25,19 @@ public class ItemCache extends Application {
         tempCache = cache;
     }
 
-    public ArrayList<RssItem> getItems(int requestID) {
-        if (requestID == _ALL_LINK) {
-            ArrayList<RssItem> list = new ArrayList<>();
-            for (ArrayList<RssItem> a : tempCache) {
-                for (RssItem b : a) {
-                    list.add(b);
-                }
+    public ArrayList<RssItem> getItems(ArrayList<Integer> requestID) {
+        ArrayList<RssItem> list = new ArrayList<>();
+
+        for (int a : requestID) {
+            ArrayList<RssItem> b = tempCache.get(a);
+            for (RssItem c : b) {
+                list.add(c);
             }
-            return list;
-        } else {
-            return tempCache.get(requestID);
         }
+
+        Collections.sort(list);
+        Collections.reverse(list);
+
+        return list;
     }
 }

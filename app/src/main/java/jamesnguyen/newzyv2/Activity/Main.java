@@ -1,10 +1,8 @@
 package jamesnguyen.newzyv2.Activity;
 
-import android.app.ProgressDialog;
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ResultReceiver;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,40 +23,37 @@ import java.util.ArrayList;
 import jamesnguyen.newzyv2.Fragments.RssFragment;
 import jamesnguyen.newzyv2.Fragments.SettingsFragment;
 import jamesnguyen.newzyv2.Fragments.WelcomeFragment;
-import jamesnguyen.newzyv2.Model.ItemCache;
-import jamesnguyen.newzyv2.Model.RssItem;
 import jamesnguyen.newzyv2.Model.SubscriptionManager;
 import jamesnguyen.newzyv2.R;
-import jamesnguyen.newzyv2.RSS_Service.RssService;
 
 public class Main extends AppCompatActivity {
 
-    private final ResultReceiver resultReceiver = new ResultReceiver(new Handler()) {
-        @SuppressWarnings("unchecked")
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            ArrayList<ArrayList<RssItem>> receivedPackage = (ArrayList<ArrayList<RssItem>>) resultData.getSerializable(RssService.ITEMS);
-            ItemCache.getInstance().setTempCache(receivedPackage);
-        }
-    };
-    private ProgressDialog loadDialog;
-
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
+    public static Activity mainActivity;
+    private static DrawerLayout mDrawerLayout;
+    private static ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private boolean backPressedOnce = false;
+
+    public static DrawerLayout getDrawerLayout() {
+        return mDrawerLayout;
+    }
+
+    public static ListView getDrawerList() {
+        return mDrawerList;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getApplicationContext();
+        mainActivity = this;
 
         // SUBSCRIPTION LIST
         SubscriptionManager.getInstance().initList();
 
         // INIT DATA CACHE
-        startService();
+        SubscriptionManager.getInstance().startService();
 
         // INIT VIEWS
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -67,7 +61,6 @@ public class Main extends AppCompatActivity {
         mDrawerList = (ListView) findViewById(android.R.id.list);
 
         // INIT TOOLBAR
-        final EditText app_name = (EditText) findViewById(R.id.search_bar);
         final TextView app_title = (TextView) findViewById(R.id.app_title);
 
         setSupportActionBar(toolbar);
@@ -79,38 +72,21 @@ public class Main extends AppCompatActivity {
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ArrayList<Integer> requestID;
                 switch (position) {
                     case 0:
-                        replaceFragment(ItemCache._ALL_LINK, false);
-                        app_title.setText("All Newzy");
+                        requestID = new ArrayList<>();
+                        for (int i = 0; i <= 5; i++) {
+                            requestID.add(i);
+                        }
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
                         break;
-                    case 1:
-                        replaceFragment(ItemCache._1_LINK, false);
-                        app_title.setText("Tech");
-                        break;
-                    case 2:
-                        replaceFragment(ItemCache._2_LINK, false);
-                        app_title.setText("Science");
-                        break;
-                    case 3:
-                        replaceFragment(ItemCache._3_LINK, false);
-                        app_title.setText("Design");
-                        break;
-                    case 4:
-                        replaceFragment(ItemCache._4_LINK, false);
-                        app_title.setText("PC World");
-                        break;
-                    case 5:
-                        replaceFragment(ItemCache._5_LINK, false);
-                        app_title.setText("Dota 2");
-                        break;
-                    case 6:
-                        replaceFragment(ItemCache._6_LINK, false);
-                        app_title.setText("CS:GO");
-                        break;
-                    case 7:
-                        replaceFragment(ItemCache._7_LINK, false);
-                        app_title.setText("onGamers");
+                    default:
+                        requestID = new ArrayList<>();
+                        requestID.add(position - 1);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position + 1));
                 }
 
                 mDrawerLayout.closeDrawer(mDrawerList);
@@ -144,8 +120,6 @@ public class Main extends AppCompatActivity {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fragment_container, welcomeFragment);
             transaction.commit();
-//            replaceFragment(ItemCache._ALL_LINK, true);
-            replaceFragment(ItemCache._ALL_LINK, false);
             app_title.setText("Home");
         }
     }
@@ -161,42 +135,9 @@ public class Main extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void startService() {
-        loadDialog = ProgressDialog.show(Main.this, "Please wait ...",
-                "Loading contents", true);
-        loadDialog.setCancelable(false);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Intent intent = new Intent(Main.this, RssService.class);
-                    intent.putExtra(RssService.RECEIVER, resultReceiver);
-                    Main.this.startService(intent);
-                    Thread.sleep(5000);
-                } catch (Exception e) {
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadDialog.dismiss();
-                        // DRAWER PREVIEW
-                        mDrawerLayout.openDrawer(mDrawerList);
-                        new Handler().postDelayed(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                mDrawerLayout.closeDrawer(mDrawerList);
-                            }
-                        }, 3000);
-                    }
-                });
-            }
-        }).start();
-    }
-
-    private void replaceFragment(int request_id, boolean add) {
+    private void replaceFragment(ArrayList<Integer> request_id, boolean add) {
         Bundle bundle = new Bundle();
-        bundle.putInt(RssFragment.ID, request_id);
+        bundle.putIntegerArrayList(RssFragment.ID, request_id);
 
         RssFragment newFragment = new RssFragment();
         newFragment.setArguments(bundle);
@@ -208,7 +149,6 @@ public class Main extends AppCompatActivity {
         } else {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
-            transaction.addToBackStack(null);
             transaction.commit();
         }
     }
