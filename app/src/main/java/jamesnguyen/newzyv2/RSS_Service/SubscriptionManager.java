@@ -49,28 +49,40 @@ public class SubscriptionManager {
     }
 
     public void initList() {
-        /* Request ID = 0 */
-        addLink("http://www.wired.com/category/gear/feed/");
-        /* Request ID = 1 */
-        addLink("http://www.wired.com/category/science/feed/");
-        /* Request ID = 2 */
-        addLink("http://www.wired.com/category/design/feed/");
-        /* Request ID = 3 */
-        addLink("http://blog.dota2.com/feed/");
-        /* Request ID = 4 */
-        addLink("http://blog.counter-strike.net/index.php/feed/");
-        /* Request ID = 5 */
-        addLink("http://www.ongamers.com/feeds/mashup/");
-        /* Request ID = 6 */
-        addLink("http://feeds.feedburner.com/crunchgear");
 
-        TITLE.add("All Newzy");
+        /* Business and Finance */
+        addLink("http://www.economist.com/sections/business-finance/rss.xml");
+
+        /* Startup and Funding */
+        addLink("http://feeds.feedburner.com/techcrunch/startups?format=xml");
+        addLink("http://feeds.feedburner.com/techcrunch/fundings-exits?format=xml");
+
+        /* Tech */
+        addLink("http://www.wired.com/category/gear/feed/");
+        addLink("http://feeds.feedburner.com/crunchgear");
+        addLink("http://www.wired.com/category/reviews/feed/");
+        addLink("http://feeds.feedburner.com/TechCrunch/Google");
+        /* Science */
+        addLink("http://www.wired.com/category/science/feed/");
+        addLink("http://www.wired.com/category/science/science-blogs/feed/");
+        addLink("http://www.sciencemag.org/rss/twis.xml");
+        /* Entertainment */
+        addLink("http://www.wired.com/category/design/feed/");
+        addLink("http://www.wired.com/category/underwire/feed/");
+        addLink("http://feeds.feedburner.com/thr/news");
+        addLink("http://www.fandango.com/rss/movie-news.rss");
+        /* Game */
+        addLink("http://www.ongamers.com/feeds/mashup/");
+        addLink("http://feeds.feedburner.com/TechCrunch/gaming");
+
+
+        TITLE.add("Home");
+        TITLE.add("Business and Finance");
+        TITLE.add("Startup and Funding");
         TITLE.add("Tech");
         TITLE.add("Science");
-        TITLE.add("Design");
-        TITLE.add("Dota 2");
-        TITLE.add("CS:GO");
-        TITLE.add("OnGamers");
+        TITLE.add("Entertainment");
+        TITLE.add("Gaming");
     }
 
     public void addLink(String link) {
@@ -88,9 +100,15 @@ public class SubscriptionManager {
                     Intent intent = new Intent(Main.mainActivity, RssService.class);
                     intent.putExtra(RssService.RECEIVER, resultReceiver);
                     Main.mainActivity.startService(intent);
-                    Thread.sleep(5000);
+                    Thread.sleep(10000);
                 } catch (Exception ignored) {
                 }
+                Main.mainActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadDialog.dismiss();
+                    }
+                });
             }
         }).start();
     }
