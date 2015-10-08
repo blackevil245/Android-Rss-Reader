@@ -42,7 +42,7 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 SettingsManager.getInstance().changeImageLoadPermission();
-
+                SettingsManager.getInstance().writeSettingsFile();
             }
         });
     }

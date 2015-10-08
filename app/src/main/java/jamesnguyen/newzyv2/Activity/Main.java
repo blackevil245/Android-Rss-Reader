@@ -1,6 +1,8 @@
 package jamesnguyen.newzyv2.Activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
@@ -16,15 +18,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import jamesnguyen.newzyv2.Application.MyApplication;
 import jamesnguyen.newzyv2.Fragments.RssFragment;
 import jamesnguyen.newzyv2.Fragments.SettingsFragment;
 import jamesnguyen.newzyv2.R;
 import jamesnguyen.newzyv2.RSS_Service.SubscriptionManager;
+import jamesnguyen.newzyv2.Utilities.ConnectionManager;
 import jamesnguyen.newzyv2.Utilities.SettingsManager;
 
 public class Main extends AppCompatActivity {
@@ -51,20 +54,12 @@ public class Main extends AppCompatActivity {
         mainActivity = this;
 
         // LOAD SETTINGS
-        final File file_setting = new File(getFilesDir() + File.separator + "Newzy_config.ini");
+        final File file_setting = new File(getFilesDir() + File.separator + "Newzy_config");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if (file_setting.exists()) {
                     SettingsManager.getInstance().readSettingsFile();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(Main.this, getFilesDir().toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    SettingsManager.getInstance().writeSettingsFile();
                 }
             }
         }).start();
@@ -72,9 +67,6 @@ public class Main extends AppCompatActivity {
 
         // INIT SUBSCRIPTION LIST
         SubscriptionManager.getInstance().initList();
-
-        // INIT DATA CACHE
-        SubscriptionManager.getInstance().startService();
 
         // INIT VIEWS
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -95,7 +87,7 @@ public class Main extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ArrayList<Integer> requestID;
                 switch (position) {
-                    case 0:
+                    case 0: //All
                         requestID = new ArrayList<>();
                         for (int i = 0; i <= (SubscriptionManager.getInstance().getAll().size() - 1); i++) {
                             requestID.add(i);
@@ -103,11 +95,52 @@ public class Main extends AppCompatActivity {
                         replaceFragment(requestID, false);
                         app_title.setText(SubscriptionManager.getInstance().getTitle(position));
                         break;
-                    default:
+                    case 1: //Business and Finance
                         requestID = new ArrayList<>();
-                        requestID.add(position - 1);
+                        requestID.add(0);
                         replaceFragment(requestID, false);
                         app_title.setText(SubscriptionManager.getInstance().getTitle(position));
+                        break;
+                    case 2: //Startup and Funding
+                        requestID = new ArrayList<>();
+                        requestID.add(1);
+                        requestID.add(2);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
+                        break;
+                    case 3: //Tech
+                        requestID = new ArrayList<>();
+                        requestID.add(3);
+                        requestID.add(4);
+                        requestID.add(5);
+                        requestID.add(6);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
+                        break;
+                    case 4: //Science
+                        requestID = new ArrayList<>();
+                        requestID.add(7);
+                        requestID.add(8);
+                        requestID.add(9);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
+                        break;
+                    case 5: //Entertainment
+                        requestID = new ArrayList<>();
+                        requestID.add(10);
+                        requestID.add(11);
+                        requestID.add(12);
+                        requestID.add(13);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
+                        break;
+                    case 6: //Game
+                        requestID = new ArrayList<>();
+                        requestID.add(14);
+                        requestID.add(15);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
+                        break;
                 }
 
                 mDrawerLayout.closeDrawer(mDrawerList);
@@ -141,14 +174,44 @@ public class Main extends AppCompatActivity {
             for (int i = 0; i <= (SubscriptionManager.getInstance().getAll().size() - 1); i++) {
                 requestID.add(i);
             }
-            new Handler().postDelayed(new Runnable() {
+            final File file_storage = new File(MyApplication.getAppContext().getFilesDir() + File.separator + "NewzyData.ser");
 
-                @Override
-                public void run() {
-                    replaceFragment(requestID, true);
+            // Get data normally
+            if (ConnectionManager.getInstance().isNetworkAvailable()) {
+                SubscriptionManager.getInstance().startService();
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        replaceFragment(requestID, true); // TODO fix bug on sudden exit
+                    }
+                }, 10000);
+                app_title.setText(SubscriptionManager.getInstance().getTitle(0));
+            } else {
+                // Read from file which contains previously data if exists when have no internet
+                if (file_storage.exists()) {
+                    SubscriptionManager.getInstance().startService();
+                    new Handler().postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            replaceFragment(requestID, true); // TODO fix bug on sudden exit
+                        }
+                    }, 10000);
+                    app_title.setText(SubscriptionManager.getInstance().getTitle(0));
+
+                    // Prevent using app when there's no connection and no previously downloaded data file
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setMessage("Please open data connection for first time data loading")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mainActivity.finish();
+                                }
+                            }).show();
                 }
-            }, 3000);
-            app_title.setText("Home");
+            }
         }
     }
 
@@ -217,7 +280,13 @@ public class Main extends AppCompatActivity {
         transaction.commit();
     }
 
-//    @Override
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("fragment_added", true);
+    }
+
+    //    @Override
 //    public void onBackPressed() {
 //        if (backPressedOnce) {
 //            super.onBackPressed();
@@ -235,10 +304,4 @@ public class Main extends AppCompatActivity {
 //            }
 //        }, 300);
 //    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("fragment_added", true);
-    }
 }

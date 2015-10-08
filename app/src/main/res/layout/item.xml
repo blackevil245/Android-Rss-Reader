@@ -20,8 +20,7 @@
             android:id="@+id/img_thumbnail"
             android:layout_width="fill_parent"
             android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            />
+            android:scaleType="centerCrop"/>
 
         <RelativeLayout
             android:layout_width="fill_parent"

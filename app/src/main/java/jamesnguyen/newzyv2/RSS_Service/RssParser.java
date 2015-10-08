@@ -87,6 +87,12 @@ public class RssParser {
             }
         }
         channelTagAcquired = false;
+
+        //Limit items received to 5
+        for (int i = 6; i < items.size(); i++) {
+            items.remove(i);
+        }
+
         return items;
     }
 

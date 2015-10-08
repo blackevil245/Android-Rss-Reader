@@ -37,7 +37,14 @@ public class ItemCache extends Application {
 
         Collections.sort(list);
         Collections.reverse(list);
+        for (int i = 0; i < list.size() - 1; i++) {
+            if (list.get(i).getTitle().equalsIgnoreCase(list.get(i + 1).getTitle())) {
+                list.remove(i);
+            }
+        }
 
         return list;
     }
+
+
 }

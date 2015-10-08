@@ -11,14 +11,11 @@
 
     <string-array name="drawer_list">
         <item>All Newzy</item>
+        <item>Business and Finance</item>
+        <item>Startup and Funding</item>
         <item>Tech</item>
         <item>Science</item>
-        <item>Design</item>
-        <item>Dota 2</item>
-        <item>CS:GO</item>
-        <item>onGamers</item>
+        <item>Entertainment</item>
+        <item>Gaming</item>
     </string-array>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
