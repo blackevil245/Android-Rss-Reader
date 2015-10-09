@@ -23,28 +23,24 @@ import java.io.File;
 import java.util.ArrayList;
 
 import jamesnguyen.newzyv2.Application.MyApplication;
+import jamesnguyen.newzyv2.Fragments.BookmarkFragment;
 import jamesnguyen.newzyv2.Fragments.RssFragment;
 import jamesnguyen.newzyv2.Fragments.SettingsFragment;
+import jamesnguyen.newzyv2.Model.BookmarkManager;
+import jamesnguyen.newzyv2.Model.ItemCache;
+import jamesnguyen.newzyv2.Model.SettingsManager;
 import jamesnguyen.newzyv2.R;
 import jamesnguyen.newzyv2.RSS_Service.SubscriptionManager;
 import jamesnguyen.newzyv2.Utilities.ConnectionManager;
-import jamesnguyen.newzyv2.Utilities.SettingsManager;
 
 public class Main extends AppCompatActivity {
 
     public static Activity mainActivity;
     private static DrawerLayout mDrawerLayout;
     private static ListView mDrawerList;
+    public TextView app_title;
     private ActionBarDrawerToggle mDrawerToggle;
     private boolean backPressedOnce = false;
-
-    public static DrawerLayout getDrawerLayout() {
-        return mDrawerLayout;
-    }
-
-    public static ListView getDrawerList() {
-        return mDrawerList;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +60,17 @@ public class Main extends AppCompatActivity {
             }
         }).start();
 
+        // LOAD BOOKMARKS
+        final File file_bookmark = new File(getFilesDir() + File.separator + "Newzy_bookmarks");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (file_bookmark.exists()) {
+                    BookmarkManager.getInstance().loadBookmarks();
+                }
+            }
+        }).start();
+
 
         // INIT SUBSCRIPTION LIST
         SubscriptionManager.getInstance().initList();
@@ -74,7 +81,7 @@ public class Main extends AppCompatActivity {
         mDrawerList = (ListView) findViewById(android.R.id.list);
 
         // INIT TOOLBAR
-        final TextView app_title = (TextView) findViewById(R.id.app_title);
+        app_title = (TextView) findViewById(R.id.app_title);
 
         setSupportActionBar(toolbar);
         assert getSupportActionBar() != null;
@@ -183,7 +190,18 @@ public class Main extends AppCompatActivity {
 
                     @Override
                     public void run() {
-                        replaceFragment(requestID, true); // TODO fix bug on sudden exit
+                        if (!ItemCache.getInstance().getTempCache().isEmpty()) {
+                            replaceFragment(requestID, true); // TODO fix bug on sudden exit
+                        } else {
+                            new AlertDialog.Builder(Main.mainActivity)
+                                    .setMessage("Data loading failed, quitting ...")
+                                    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mainActivity.finish();
+                                        }
+                                    }).show();
+                        }
                     }
                 }, 10000);
                 app_title.setText(SubscriptionManager.getInstance().getTitle(0));
@@ -195,7 +213,19 @@ public class Main extends AppCompatActivity {
 
                         @Override
                         public void run() {
-                            replaceFragment(requestID, true); // TODO fix bug on sudden exit
+                            if (!ItemCache.getInstance().getTempCache().isEmpty()) {
+                                replaceFragment(requestID, true); // TODO fix bug on sudden exit
+                            } else {
+                                new AlertDialog.Builder(Main.mainActivity)
+                                        .setMessage("Data loading failed, quitting ...")
+                                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mainActivity.finish();
+                                            }
+                                        }).show();
+                            }
+
                         }
                     }, 10000);
                     app_title.setText(SubscriptionManager.getInstance().getTitle(0));
@@ -267,6 +297,9 @@ public class Main extends AppCompatActivity {
             case R.id.action_settings:
                 openSettings();
                 return true;
+            case R.id.action_bookmarks:
+                openBookmarks();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -280,13 +313,21 @@ public class Main extends AppCompatActivity {
         transaction.commit();
     }
 
+    protected void openBookmarks() {
+        BookmarkFragment newFragment = BookmarkFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("fragment_added", true);
     }
 
-    //    @Override
+    //    @Override //TODO more interaction on back pressed
 //    public void onBackPressed() {
 //        if (backPressedOnce) {
 //            super.onBackPressed();

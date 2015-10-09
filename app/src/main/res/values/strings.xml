@@ -18,4 +18,6 @@
         <item>Entertainment</item>
         <item>Gaming</item>
     </string-array>
+
+    <string name="bookmark">bookmark</string>
 </resources>

@@ -1,4 +1,4 @@
-package jamesnguyen.newzyv2.Utilities;
+package jamesnguyen.newzyv2.Model;
 
 import android.content.Context;
 

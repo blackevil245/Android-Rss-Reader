@@ -7,16 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ToggleButton;
 
+import jamesnguyen.newzyv2.Model.SettingsManager;
 import jamesnguyen.newzyv2.R;
-import jamesnguyen.newzyv2.Utilities.SettingsManager;
 
 public class SettingsFragment extends Fragment {
 
     public static SettingsFragment newInstance() {
-        SettingsFragment fragment = new SettingsFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        return new SettingsFragment();
     }
 
     @Override
@@ -28,7 +25,7 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        return inflater.inflate(R.layout.settings_fragment, container, false);
     }
 
     @Override
@@ -41,9 +38,11 @@ public class SettingsFragment extends Fragment {
         load_image_toggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SettingsManager.getInstance().changeImageLoadPermission();
+                SettingsManager.getInstance().changeImageLoadPermission(); // TODO CHANGE WRITTING PROCESS TO ONDESTROY
                 SettingsManager.getInstance().writeSettingsFile();
             }
         });
     }
+
+
 }

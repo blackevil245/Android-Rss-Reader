@@ -3,9 +3,16 @@
       xmlns:myapp="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings_white_24dp"
+        android:id="@+id/action_bookmarks"
+        android:icon="@drawable/ic_bookmark_white_24dp"
         android:title="@string/setting"
         myapp:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings_white_24dp"
+        android:title="@string/bookmark"
+        myapp:showAsAction="ifRoom"/>
+
 
 </menu>

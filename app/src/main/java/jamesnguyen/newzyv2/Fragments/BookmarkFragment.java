@@ -9,22 +9,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
-import jamesnguyen.newzyv2.Adapter.FeedAdapter;
-import jamesnguyen.newzyv2.Model.ItemCache;
+import jamesnguyen.newzyv2.Adapter.BookmarkAdapter;
+import jamesnguyen.newzyv2.Model.BookmarkManager;
 import jamesnguyen.newzyv2.Model.RssItem;
 import jamesnguyen.newzyv2.R;
 
-public class RssFragment extends Fragment {
-    public final static String ID = "id";
+public class BookmarkFragment extends Fragment {
 
     protected View mView;
-    private ArrayList<Integer> requestID;
+    private BookmarkAdapter adapter;
+
+    public static BookmarkFragment newInstance() {
+        return new BookmarkFragment();
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        requestID = this.getArguments().getIntegerArrayList(ID);
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
@@ -32,25 +34,31 @@ public class RssFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        this.mView = inflater.inflate(R.layout.rss_fragment, container, false);
+        this.mView = inflater.inflate(R.layout.bookmark_fragment, container, false);
 
         // SETUP RECYCLER VIEW
-        RecyclerView rv = (RecyclerView) mView.findViewById(R.id.feed);
+        RecyclerView rv = (RecyclerView) mView.findViewById(R.id.bookmark_recycler_view);
         LinearLayoutManager rvManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(rvManager);
 
-        ArrayList<RssItem> data = loadData();
-        FeedAdapter adapter = new FeedAdapter(getActivity(), data);
+        ArrayList<RssItem> data = BookmarkManager.getInstance().getList();
+        adapter = new BookmarkAdapter(getActivity(), data);
         rv.setAdapter(adapter);
 
         //RETURN
         return mView;
     }
 
-    private ArrayList<RssItem> loadData() {
-        ArrayList<RssItem> appendinglist = ItemCache.getInstance().getItems(this.requestID);
-        Collections.sort(appendinglist);
-        Collections.reverse(appendinglist);
-        return appendinglist;
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BookmarkManager.getInstance().writeBookmarks();
+    }
+
 }
