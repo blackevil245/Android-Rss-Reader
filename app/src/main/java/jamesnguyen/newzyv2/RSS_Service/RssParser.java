@@ -2,6 +2,8 @@ package jamesnguyen.newzyv2.RSS_Service;
 
 import android.util.Xml;
 
+import junit.framework.Assert;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xmlpull.v1.XmlPullParser;
@@ -11,14 +13,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
 
 import jamesnguyen.newzyv2.Model.RssItem;
+import jamesnguyen.newzyv2.Utilities.RssItemProcessor;
 
 public class RssParser {
     private final String nameSpace = null; //No name space
 
-    public List<RssItem> parse(InputStream inputStream) throws XmlPullParserException, IOException, ParseException {
+    public ArrayList<RssItem> parse(InputStream inputStream) throws XmlPullParserException, IOException, ParseException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -26,19 +28,25 @@ public class RssParser {
             parser.nextTag();
             return readFeed(parser);
         } finally {
-            inputStream.close();
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                Assert.assertEquals(e.getLocalizedMessage(), "Inputstream closed");
+            }
         }
     }
 
-    public List<RssItem> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
+    public ArrayList<RssItem> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
         String channel_title = null;
         String title = null;
         String link = null;
         String pubDate = null;
+        String imageURL = null;
         Document description = null;
         Boolean insideItem = false;
+        Boolean channelTagAcquired = false;
         int eventType = parser.getEventType();
-        List<RssItem> items = new ArrayList<>();
+        ArrayList<RssItem> items = new ArrayList<>();
 
         while (eventType != XmlPullParser.END_DOCUMENT) {
             if (eventType == XmlPullParser.START_TAG) {
@@ -48,7 +56,10 @@ public class RssParser {
                     if (insideItem)
                         title = readTitle(parser); //extract the title of article
                     else {
-                        channel_title = "<< " + readTitle(parser) + " >>"; // extract channel title
+                        if (!channelTagAcquired) {
+                            channel_title = "<< " + readTitle(parser) + " >>"; // extract channel title
+                            channelTagAcquired = true;
+                        }
                     }
                 } else if (parser.getName().equalsIgnoreCase("link")) {
                     if (insideItem)
@@ -58,7 +69,7 @@ public class RssParser {
                         pubDate = readPubDate(parser); //extract the link of article
                 } else if (parser.getName().equalsIgnoreCase("description")) {
                     if (insideItem)
-                        description = readDescription(parser); //extract the link of article
+                        description = readDescription(parser); //extract the description of article
                 }
             } else if (eventType == XmlPullParser.END_TAG && parser.getName().equalsIgnoreCase("item")) {
                 insideItem = false;
@@ -66,7 +77,8 @@ public class RssParser {
             eventType = parser.next();
 
             if (channel_title != null && title != null && link != null && pubDate != null && description != null) {
-                RssItem item = new RssItem(channel_title, title, link, pubDate, description);
+                imageURL = RssItemProcessor.getInstance().parseImageURL(description);
+                RssItem item = new RssItem(channel_title, title, link, pubDate, description.toString(), imageURL);
                 items.add(item);
                 title = null;
                 link = null;
@@ -74,6 +86,13 @@ public class RssParser {
                 description = null;
             }
         }
+        channelTagAcquired = false;
+
+        //Limit items received to 5
+        for (int i = 6; i < items.size(); i++) {
+            items.remove(i);
+        }
+
         return items;
     }
 

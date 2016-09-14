@@ -1,5 +1,8 @@
 package jamesnguyen.newzyv2.Activity;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
@@ -13,22 +16,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import jamesnguyen.newzyv2.Application.MyApplication;
+import jamesnguyen.newzyv2.Fragments.BookmarkFragment;
 import jamesnguyen.newzyv2.Fragments.RssFragment;
-import jamesnguyen.newzyv2.Model.SubscriptionManager;
+import jamesnguyen.newzyv2.Fragments.SettingsFragment;
+import jamesnguyen.newzyv2.Model.BookmarkManager;
+import jamesnguyen.newzyv2.Model.ItemCache;
+import jamesnguyen.newzyv2.Model.SettingsManager;
 import jamesnguyen.newzyv2.R;
+import jamesnguyen.newzyv2.RSS_Service.SubscriptionManager;
+import jamesnguyen.newzyv2.Utilities.ConnectionManager;
 
 public class Main extends AppCompatActivity {
 
-    private final SubscriptionManager subscriptionManager = SubscriptionManager.getInstance();
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
+    public static Activity mainActivity;
+    private static DrawerLayout mDrawerLayout;
+    private static ListView mDrawerList;
+    public TextView app_title;
     private ActionBarDrawerToggle mDrawerToggle;
     private boolean backPressedOnce = false;
 
@@ -36,63 +46,107 @@ public class Main extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getApplicationContext();
+        mainActivity = this;
 
-        /////// INIT VIEWS ///////
+        // LOAD SETTINGS
+        final File file_setting = new File(getFilesDir() + File.separator + "Newzy_config");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (file_setting.exists()) {
+                    SettingsManager.getInstance().readSettingsFile();
+                }
+            }
+        }).start();
+
+        // LOAD BOOKMARKS
+        final File file_bookmark = new File(getFilesDir() + File.separator + "Newzy_bookmarks");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (file_bookmark.exists()) {
+                    BookmarkManager.getInstance().loadBookmarks();
+                }
+            }
+        }).start();
+
+
+        // INIT SUBSCRIPTION LIST
+        SubscriptionManager.getInstance().initList();
+
+        // INIT VIEWS
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         mDrawerList = (ListView) findViewById(android.R.id.list);
 
-        /////// SUBSCRIPTION LIST ///////
-        subscriptionManager.initList();
-
-        /////// INIT TOOLBAR ///////
-        final EditText app_name = (EditText) findViewById(R.id.search_bar);
-        final TextView app_title = (TextView) findViewById(R.id.app_title);
+        // INIT TOOLBAR
+        app_title = (TextView) findViewById(R.id.app_title);
 
         setSupportActionBar(toolbar);
         assert getSupportActionBar() != null;
 
-        /////// SETUP DRAWER ////////
+        // SETUP DRAWER
         String[] mDrawerListItems = getResources().getStringArray(R.array.drawer_list);
         mDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_item, R.id.menu_item_title, mDrawerListItems));
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ArrayList<Integer> requestID;
                 switch (position) {
-                    case 0:
-                        replaceFragment(SubscriptionManager.getAll(), true, false);
-                        app_title.setText("All Newzy");
+                    case 0: //All
+                        requestID = new ArrayList<>();
+                        for (int i = 0; i <= (SubscriptionManager.getInstance().getAll().size() - 1); i++) {
+                            requestID.add(i);
+                        }
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
                         break;
-                    case 1:
-                        replaceFragment(subscriptionManager.getLink(0), false, false);
-                        app_title.setText("Tech");
+                    case 1: //Business and Finance
+                        requestID = new ArrayList<>();
+                        requestID.add(0);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
                         break;
-                    case 2:
-                        replaceFragment(subscriptionManager.getLink(1), false, false);
-                        app_title.setText("Science");
+                    case 2: //Startup and Funding
+                        requestID = new ArrayList<>();
+                        requestID.add(1);
+                        requestID.add(2);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
                         break;
-                    case 3:
-                        replaceFragment(subscriptionManager.getLink(2), false, false);
-                        app_title.setText("Design");
+                    case 3: //Tech
+                        requestID = new ArrayList<>();
+                        requestID.add(3);
+                        requestID.add(4);
+                        requestID.add(5);
+                        requestID.add(6);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
                         break;
-                    case 4:
-                        replaceFragment(subscriptionManager.getLink(3), false, false);
-                        app_title.setText("PC World");
+                    case 4: //Science
+                        requestID = new ArrayList<>();
+                        requestID.add(7);
+                        requestID.add(8);
+                        requestID.add(9);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
                         break;
-                    case 5:
-                        replaceFragment(subscriptionManager.getLink(4), false, false);
-                        app_title.setText("Dota 2");
+                    case 5: //Entertainment
+                        requestID = new ArrayList<>();
+                        requestID.add(10);
+                        requestID.add(11);
+                        requestID.add(12);
+                        requestID.add(13);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
                         break;
-                    case 6:
-                        replaceFragment(subscriptionManager.getLink(5), false, false);
-                        app_title.setText("CS:GO");
-                        break;
-                    case 7:
-                        replaceFragment(subscriptionManager.getLink(6), false, false);
-                        app_title.setText("onGamers");
-                        break;
-                    default:
-                        replaceFragment(subscriptionManager.getLink(position - 1), false, false);
+                    case 6: //Game
+                        requestID = new ArrayList<>();
+                        requestID.add(14);
+                        requestID.add(15);
+                        replaceFragment(requestID, false);
+                        app_title.setText(SubscriptionManager.getInstance().getTitle(position));
                         break;
                 }
 
@@ -115,23 +169,97 @@ public class Main extends AppCompatActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        /////// SETUP TOOLBAR /////////
+        // SETUP TOOLBAR
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle.syncState();
 
-        /////// START RSS FRAGMENTS //////
+        // START RSS READER + show ALL Fragment
         if (savedInstanceState == null) {
-            replaceFragment(SubscriptionManager.getAll(), true, true);
-            app_title.setText("All Newzy");
+            final ArrayList<Integer> requestID = new ArrayList<>();
+            for (int i = 0; i <= (SubscriptionManager.getInstance().getAll().size() - 1); i++) {
+                requestID.add(i);
+            }
+            final File file_storage = new File(MyApplication.getAppContext().getFilesDir() + File.separator + "NewzyData.ser");
+
+            // Get data normally
+            if (ConnectionManager.getInstance().isNetworkAvailable()) {
+                SubscriptionManager.getInstance().startService();
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (!ItemCache.getInstance().getTempCache().isEmpty()) {
+                            replaceFragment(requestID, true); // TODO fix bug on sudden exit
+                        } else {
+                            new AlertDialog.Builder(Main.mainActivity)
+                                    .setMessage("Data loading failed, quitting ...")
+                                    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mainActivity.finish();
+                                        }
+                                    }).show();
+                        }
+                    }
+                }, 10000);
+                app_title.setText(SubscriptionManager.getInstance().getTitle(0));
+            } else {
+                // Read from file which contains previously data if exists when have no internet
+                if (file_storage.exists()) {
+                    SubscriptionManager.getInstance().startService();
+                    new Handler().postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (!ItemCache.getInstance().getTempCache().isEmpty()) {
+                                replaceFragment(requestID, true); // TODO fix bug on sudden exit
+                            } else {
+                                new AlertDialog.Builder(Main.mainActivity)
+                                        .setMessage("Data loading failed, quitting ...")
+                                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mainActivity.finish();
+                                            }
+                                        }).show();
+                            }
+
+                        }
+                    }, 10000);
+                    app_title.setText(SubscriptionManager.getInstance().getTitle(0));
+
+                    // Prevent using app when there's no connection and no previously downloaded data file
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setMessage("Please open data connection for first time data loading")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mainActivity.finish();
+                                }
+                            }).show();
+                }
+            }
         }
     }
 
-    private void replaceFragment(ArrayList<String> links, boolean showAll, boolean add) {
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SettingsManager.getInstance().writeSettingsFile();
+    }
+
+    private void replaceFragment(ArrayList<Integer> request_id, boolean add) {
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList(RssFragment.LINKS, links);
-        bundle.putBoolean(RssFragment.ALL, showAll);
+        bundle.putIntegerArrayList(RssFragment.ID, request_id);
 
         RssFragment newFragment = new RssFragment();
         newFragment.setArguments(bundle);
@@ -143,15 +271,8 @@ public class Main extends AppCompatActivity {
         } else {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
-            transaction.addToBackStack(null);
             transaction.commit();
         }
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
     }
 
     @Override
@@ -173,34 +294,31 @@ public class Main extends AppCompatActivity {
                     mDrawerLayout.openDrawer(mDrawerList);
                 }
                 return true;
-            case R.id.action_search:
-//                openSearch();
-                return true;
             case R.id.action_settings:
-//                openSettings();
+                openSettings();
+                return true;
+            case R.id.action_bookmarks:
+                openBookmarks();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        if (backPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
+    protected void openSettings() {
+        SettingsFragment newFragment = SettingsFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
 
-        backPressedOnce = true;
-
-        Toast.makeText(Main.this, "Press BACK again to exit!", Toast.LENGTH_SHORT).show();
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                backPressedOnce = false;
-            }
-        }, 2000);
+    protected void openBookmarks() {
+        BookmarkFragment newFragment = BookmarkFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
@@ -208,4 +326,23 @@ public class Main extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putBoolean("fragment_added", true);
     }
+
+    //    @Override //TODO more interaction on back pressed
+//    public void onBackPressed() {
+//        if (backPressedOnce) {
+//            super.onBackPressed();
+//            return;
+//        }
+//
+//        backPressedOnce = true;
+//
+//        Toast.makeText(Main.this, "Press BACK again to exit!", Toast.LENGTH_SHORT).show();
+//        new Handler().postDelayed(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                backPressedOnce = false;
+//            }
+//        }, 300);
+//    }
 }

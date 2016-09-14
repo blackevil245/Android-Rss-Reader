@@ -11,12 +11,13 @@
 
     <string-array name="drawer_list">
         <item>All Newzy</item>
+        <item>Business and Finance</item>
+        <item>Startup and Funding</item>
         <item>Tech</item>
         <item>Science</item>
-        <item>Design</item>
-        <item>PC World</item>
-        <item>Dota 2</item>
-        <item>CS:GO</item>
-        <item>onGamers</item>
+        <item>Entertainment</item>
+        <item>Gaming</item>
     </string-array>
+
+    <string name="bookmark">bookmark</string>
 </resources>
